@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@ant-design/icons-vue": "^6.1.0",
     "axios": "^0.27.2",
     "element-ui": "^2.15.9",
     "store": "^2.0.12"
