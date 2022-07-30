@@ -264,7 +264,7 @@ export default {
 }
 
 .itemBox:hover {
-  background-color: rgba(225, 225, 225, .7);
+  background-color: rgba(225, 225, 225, .9);
 }
 
 @media screen and (max-width: 350px) {

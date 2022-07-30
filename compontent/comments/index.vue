@@ -11,7 +11,7 @@
         </svg>
       </view>
     </view>
-    <textarea class="mytextarea" placeholder="留下你的宝贵意见 or “Ding”一下固定在屏幕左上角"
+    <textarea class="mytextarea" placeholder="留下你的宝贵意见 or Ding一下固定在屏幕左上角"
               name=""
               id=""
               cols="100%" rows="100%"

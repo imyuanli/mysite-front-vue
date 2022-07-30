@@ -212,7 +212,10 @@ export default {
   font-weight: 200;
   text-shadow: 0 0 20px rgba(0, 0, 0, .35);
 }
+.time:hover{
+  transform: translateX(-50%) scale(1.2);
 
+}
 .contentBox {
   width: 100%;
   height: 100%;
