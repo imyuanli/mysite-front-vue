@@ -1,74 +1,107 @@
 <template>
-  <view class="content" :style="{'backgroundImage':`url(${backgroundImage})`}">
+  <!--  <view class="content" :style="{'backgroundImage':`url(${backgroundImage})`}">-->
+  <view class="content">
     <view :class="[showLongInput?'contentBox showBlur':'contentBox']">
-      <view class="time">
-        <span>{{dateTime}}</span>
-        <span v-if="showSeconds">{{dateSeconds}}</span>
-      </view>
-      <view :class="[showLongInput?'inputBox longInput ':'inputBox shortInput']">
-        <view class="searchBar">
-          <input @focus="handleClick"
-                 @blur="handleClick"
-                 class="input"
-                 v-model="inputVlaue"
-                 :placeholder="showLongInput?'':'搜索'"/>
+      <view>
+        <view class="time">
+          <span>{{ dateTime }}</span>
+          <span v-if="showSeconds">{{ dateSeconds }}</span>
         </view>
-      </view>
-      <view v-if="showLongInput ">
-        <Tools />
+        <view :class="[showLongInput?'inputBox longInput ':'inputBox shortInput']">
+          <view class="searchBar">
+            <input @focus="handleClick"
+                   @blur="handleClick"
+                   class="input"
+                   v-model="inputVlaue"
+                   :placeholder="showLongInput?'':'搜索'"/>
+          </view>
+        </view>
+        <view>
+          <view v-if="showWorks">
+            <Tools/>
+          </view>
+          <view v-if="!showWorks">
+            <Comments />
+          </view>
+        </view>
+        <view class="navPageBox">
+          <view class="navBox" @click="changeComment">
+            <span :class="[showWorks?'nav navActive':'nav']"></span>
+          </view>
+          <view class="navBox" @click="changeTools">
+            <span :class="[showWorks?'nav':'nav navActive']" class="nav"></span>
+          </view>
+        </view>
       </view>
       <view class="reflash">
         <view @click="getBackgroundImage">
-          <svg t="1659080303977" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7004" width="30" height="30"><path d="M960 416V192l-73.056 73.056a447.712 447.712 0 0 0-373.6-201.088C265.92 63.968 65.312 264.544 65.312 512S265.92 960.032 513.344 960.032a448.064 448.064 0 0 0 415.232-279.488 38.368 38.368 0 1 0-71.136-28.896 371.36 371.36 0 0 1-344.096 231.584C308.32 883.232 142.112 717.024 142.112 512S308.32 140.768 513.344 140.768c132.448 0 251.936 70.08 318.016 179.84L736 416h224z" p-id="7005" fill="#8a8a8a"></path></svg>
+          <svg t="1659080303977" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+               p-id="7004" width="30" height="30">
+            <path
+                d="M960 416V192l-73.056 73.056a447.712 447.712 0 0 0-373.6-201.088C265.92 63.968 65.312 264.544 65.312 512S265.92 960.032 513.344 960.032a448.064 448.064 0 0 0 415.232-279.488 38.368 38.368 0 1 0-71.136-28.896 371.36 371.36 0 0 1-344.096 231.584C308.32 883.232 142.112 717.024 142.112 512S308.32 140.768 513.344 140.768c132.448 0 251.936 70.08 318.016 179.84L736 416h224z"
+                p-id="7005" fill="#8a8a8a"></path>
+          </svg>
         </view>
       </view>
+    </view>
+    <view>
+
     </view>
   </view>
 </template>
 
 <script>
-import {get_login_code,get_background_mage} from "../../service/service";
+import {get_background_mage} from "../../service/service";
 import Tools from '../../compontent/tools'
-import axios from "axios";
-export default  {
+import Comments from '../../compontent/comments'
+
+export default {
   components: {
-    Tools
+    Tools,
+    Comments
   },
   data() {
     return {
       inputVlaue: '',
       showLongInput: false,
       options: [
-          {
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶',
-        disabled: true
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
+        {
+          value: '选项1',
+          label: '黄金糕'
+        }, {
+          value: '选项2',
+          label: '双皮奶',
+          disabled: true
+        }, {
+          value: '选项3',
+          label: '蚵仔煎'
+        }, {
+          value: '选项4',
+          label: '龙须面'
+        }, {
+          value: '选项5',
+          label: '北京烤鸭'
+        }],
       value: '',
       //  时间
-      dateTime:'',
-      dateSeconds:"",
-      showSeconds:false,
-      timer:"",
-    //壁纸
-      backgroundImage:''
+      dateTime: '',
+      dateSeconds: "",
+      showSeconds: false,
+      timer: "",
+
+      //作品和评论及DING
+      showWorks: true,
+
+      //壁纸
+      //   backgroundImage:''
     }
   },
   onLoad() {
-    this.getBackgroundImage()
-    this.timer = setInterval(()=>{
+    //随机推荐一张壁纸
+    // this.getBackgroundImage()
+
+    //时间显示
+    this.timer = setInterval(() => {
       this.getNowTime()
     }, 1000);
 
@@ -77,17 +110,23 @@ export default  {
     handleClick() {
       this.showLongInput = !this.showLongInput
     },
-    getNowTime(){
+    getNowTime() {
       let date = new Date()
       this.dateTime = `${date.getHours()}:${date.getMinutes()}`
       this.dateSeconds = `:${date.getSeconds()}`
     },
-    getBackgroundImage(){
+    getBackgroundImage() {
       get_background_mage().then(
-          (res)=>{
+          (res) => {
             this.backgroundImage = res
           }
       )
+    },
+    changeComment(){
+      this.showWorks = true
+    },
+    changeTools(){
+      this.showWorks = false
     }
   },
   beforeDestroy() {
@@ -100,6 +139,7 @@ export default  {
 
 <style>
 .content {
+  background-image: url("../../static/backimg.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -107,9 +147,10 @@ export default  {
   height: 100vh;
   position: relative;
 }
-.time{
+
+.time {
   position: fixed;
-  top: 120px;
+  top: 100px;
   left: 50%;
   transform: translateX(-50%);
   padding: 10px;
@@ -120,8 +161,9 @@ export default  {
   color: #fff;
   font-size: 32px;
   font-weight: 200;
-  text-shadow: 0 0 20px rgba(0,0,0,.35);
+  text-shadow: 0 0 20px rgba(0, 0, 0, .35);
 }
+
 .contentBox {
   width: 100%;
   height: 100%;
@@ -134,7 +176,7 @@ export default  {
 
 .inputBox {
   position: absolute;
-  top: 200px;
+  top: 180px;
   left: 50%;
   transform: translateX(-50%);
   width: 230px;
@@ -191,10 +233,50 @@ export default  {
   z-index: 1000;
 }
 
-.reflash{
+.reflash {
   position: absolute;
   right: 50px;
   top: 20px;
   cursor: pointer;
+}
+
+.navPageBox{
+  position: absolute;
+  left: 50%;
+  bottom: 50px;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+   z-index: 20;
+  padding: 0 7px;
+  border-radius: 12px;
+  transition: .25s;
+  cursor: pointer;
+}
+.navPageBox:hover{
+  background-color: rgba(255,255,255,.1);
+  backdrop-filter: blur(10px)!important;
+}
+.navBox{
+  display: inline-block;
+  padding: 10px 3px;
+}
+
+.nav{
+  display: block;
+  width: 30px;
+  height: 5px;
+  background-color: rgba(0,0,0);
+  transition: .25s;
+  border-radius: 2px;
+}
+.navBox:hover .nav{
+  background-color: rgba(255,255,255,.5);
+  backdrop-filter: blur(10px)!important;
+}
+.navActive{
+  background-color: rgba(255,255,255,.5);
+  backdrop-filter: blur(10px)!important;
 }
 </style>
