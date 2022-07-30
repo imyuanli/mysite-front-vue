@@ -1,6 +1,6 @@
 <template>
-  <!--  <view class="content" :style="{'backgroundImage':`url(${backgroundImage})`}">-->
-  <view class="content">
+    <view class="content" :style="{'backgroundImage':`url(${backgroundImage})`}">
+<!--  <view class="content">-->
     <view :class="[showLongInput?'contentBox showBlur':'contentBox']">
       <view>
         <view class="time">
@@ -21,7 +21,7 @@
             <Tools/>
           </view>
           <view v-if="!showWorks">
-            <Comments />
+            <Comments/>
           </view>
         </view>
         <view class="navPageBox">
@@ -33,19 +33,64 @@
           </view>
         </view>
       </view>
-      <view class="reflash">
-        <view @click="getBackgroundImage">
-          <svg t="1659080303977" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-               p-id="7004" width="30" height="30">
-            <path
-                d="M960 416V192l-73.056 73.056a447.712 447.712 0 0 0-373.6-201.088C265.92 63.968 65.312 264.544 65.312 512S265.92 960.032 513.344 960.032a448.064 448.064 0 0 0 415.232-279.488 38.368 38.368 0 1 0-71.136-28.896 371.36 371.36 0 0 1-344.096 231.584C308.32 883.232 142.112 717.024 142.112 512S308.32 140.768 513.344 140.768c132.448 0 251.936 70.08 318.016 179.84L736 416h224z"
-                p-id="7005" fill="#8a8a8a"></path>
-          </svg>
+      <view class="loginAndFlash">
+        <view class="lFBox">
+          <el-tooltip class="item"
+                      effect="light"
+                      placement="bottom">
+            <view slot="content" class="contentSlotBox">
+              <view class="content-bottom">
+                换壁纸
+              </view>
+            </view>
+            <svg @click="getBackgroundImage" t="1659164995587" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 p-id="34667" width="22" height="22">
+              <path
+                  d="M265.476047 298.525672a31.565968 31.565968 0 0 1-22.336079-53.88942L477.611978 10.10111a31.601322 31.601322 0 0 1 44.684784 44.69741l-234.47201 234.47201a31.464957 31.464957 0 0 1-22.348705 9.255142zM254.933013 769.199507a31.464957 31.464957 0 0 1-22.336078-9.255142L31.951016 559.273194a31.601322 31.601322 0 1 1 44.684784-44.697411l200.645919 200.671171a31.565968 31.565968 0 0 1-22.348706 53.952553zM519.165418 1014.593342a31.565968 31.565968 0 0 1-22.348705-53.952553l225.684044-225.684044a31.606372 31.606372 0 1 1 44.697411 44.69741L541.514123 1005.3382a31.565968 31.565968 0 0 1-22.348705 9.255142zM984.826577 548.932182a31.477583 31.477583 0 0 1-22.336079-9.267768L718.977995 296.177164a31.597534 31.597534 0 0 1 44.684784-44.684784L1007.175282 494.97963a31.565968 31.565968 0 0 1-22.348705 53.952552z"
+                  fill="#cdcdcd" p-id="34668"></path>
+              <path
+                  d="M509.809265 533.780518a31.565968 31.565968 0 0 1-31.565968-31.565968V31.603847a31.565968 31.565968 0 0 1 31.565968-31.565968h470.547571a31.565968 31.565968 0 0 1 22.348705 53.939926L532.107465 524.550629a31.565968 31.565968 0 0 1-22.2982 9.229889z m31.565968-470.610703v362.743477L904.068205 63.207694z"
+                  fill="#cdcdcd" p-id="34669"></path>
+              <path
+                  d="M980.356836 1024a31.565968 31.565968 0 0 1-22.310826-9.255142L487.410054 544.134155a31.565968 31.565968 0 0 1 22.399211-53.952552h470.547571a31.565968 31.565968 0 0 1 31.565968 31.565968v470.648582a31.654353 31.654353 0 0 1-19.507768 29.204833 31.995265 31.995265 0 0 1-12.0582 2.399014zM586.060017 553.401924l362.692972 362.692971V553.401924z"
+                  fill="#cdcdcd" p-id="34670"></path>
+              <path
+                  d="M509.809265 1004.391221H39.160683a31.565968 31.565968 0 0 1-22.348705-53.939926l470.598076-470.610703a31.565968 31.565968 0 0 1 53.965179 22.373958v470.572824a31.565968 31.565968 0 0 1-31.565968 31.603847zM115.449314 941.183527h362.705598V578.477928z"
+                  fill="#cdcdcd" p-id="34671"></path>
+              <path
+                  d="M509.809265 553.401924H39.160683a31.565968 31.565968 0 0 1-31.565968-31.565968V51.187374a31.565968 31.565968 0 0 1 53.939926-22.348706l470.572824 470.610703a31.565968 31.565968 0 0 1-22.2982 53.952553zM70.76453 490.181603h362.692972L70.76453 127.488631z"
+                  fill="#cdcdcd" p-id="34672"></path>
+            </svg>
+          </el-tooltip>
+        </view>
+        <view class="lFBox">
+          <el-tooltip class="item"
+                      effect="light"
+                      placement="bottom-end">
+            <view slot="content" class="contentSlotBox">
+              <view class="content-top">
+                <svg t="1659164183161" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg" p-id="32101" width="25" height="25">
+                  <path
+                      d="M677.973333 599.466667a42.666667 42.666667 0 0 1-30.293333-12.373334l-45.653333-45.653333 60.586666-60.16 15.36 15.36 75.52-75.52a106.666667 106.666667 0 0 0 0-150.613333 108.8 108.8 0 0 0-151.04 0l-75.093333 75.52 13.226667 13.226666-60.16 60.586667-42.666667-42.666667a42.666667 42.666667 0 0 1 0-60.16l105.813333-105.813333a192 192 0 0 1 271.36 271.786667l-106.666666 104.106666a42.666667 42.666667 0 0 1-30.293334 12.373334zM346.026667 869.546667a192 192 0 0 1-135.68-327.68l105.813333-105.813334a42.666667 42.666667 0 0 1 60.16 0l45.653333 45.653334-60.16 60.586666-15.786666-15.36-75.093334 75.093334a106.666667 106.666667 0 0 0 150.613334 151.04l75.52-75.52-13.653334-13.653334 60.16-60.16 42.666667 42.666667a42.666667 42.666667 0 0 1 0 60.586667l-104.106667 106.24a191.573333 191.573333 0 0 1-136.106666 56.32zM701.44 884.906667a42.666667 42.666667 0 0 1-42.666667-31.573334l-23.893333-88.746666a42.666667 42.666667 0 0 1 82.346667-22.186667l23.893333 88.746667a42.666667 42.666667 0 0 1-30.293333 52.48 46.506667 46.506667 0 0 1-9.386667 1.28zM847.786667 738.986667a34.986667 34.986667 0 0 1-11.093334 0l-88.746666-23.893334a42.666667 42.666667 0 0 1-30.293334-52.053333 42.666667 42.666667 0 0 1 52.48-30.293333l88.746667 23.893333a42.666667 42.666667 0 0 1-11.093333 85.333333zM265.813333 394.24a46.506667 46.506667 0 0 1-11.093333 0l-89.173333-25.173333a42.666667 42.666667 0 0 1 22.186666-82.346667l88.746667 23.893333a42.666667 42.666667 0 0 1-10.666667 85.333334zM346.88 312.746667a42.666667 42.666667 0 0 1-42.666667-31.573334l-22.186666-88.746666a42.666667 42.666667 0 0 1 30.293333-52.48A42.666667 42.666667 0 0 1 364.373333 170.666667l23.893334 88.32a42.666667 42.666667 0 0 1-30.293334 52.48 46.506667 46.506667 0 0 1-11.093333 1.28z"
+                      p-id="32102" fill="#8a8a8a"></path>
+                </svg>
+                您还没有登录
+              </view>
+              <view class="content-bottom">
+                登录后即可获得自定义网站捷径及众多功能
+              </view>
+            </view>
+            <svg @click="goToLoginPage" t="1659162872590" class="icon" viewBox="0 0 1039 1024" version="1.1"
+                 xmlns="http://www.w3.org/2000/svg"
+                 p-id="29706" width="25" height="25">
+              <path
+                  d="M462.619289 83.68731c-12.994924 2.598985-40.024365 12.994924-60.816243 22.871066C284.328934 164.255838 244.824365 313.437563 317.076142 425.193909c97.721827 151.780711 335.788832 127.870051 402.322843-40.544163C783.853807 221.433503 637.790863 49.900508 462.619289 83.68731zM369.055838 570.217259c-115.394924 20.791878-212.596954 114.35533-236.507615 227.671066-8.836548 42.62335-9.876142 82.127919-2.598984 96.682233 7.796954 14.034518 40.544162 29.108629 78.48934 36.385787 47.82132 8.316751 429.872081 12.475127 534.871066 5.19797 133.587817-8.316751 166.335025-23.390863 166.335025-75.370559-0.519797-72.251777-29.628426-145.543147-78.48934-198.042639-36.385787-38.464975-70.172589-61.336041-117.993909-80.048731-34.306599-12.994924-37.945178-12.994924-182.968528-14.034518-81.608122-0.519797-153.859898 0-161.137055 1.559391z"
+                  p-id="29707" fill="#cdcdcd"></path>
+            </svg>
+          </el-tooltip>
         </view>
       </view>
-    </view>
-    <view>
-
     </view>
   </view>
 </template>
@@ -54,6 +99,7 @@
 import {get_background_mage} from "../../service/service";
 import Tools from '../../compontent/tools'
 import Comments from '../../compontent/comments'
+import {goToLoginPage} from '../../utils/routers'
 
 export default {
   components: {
@@ -93,12 +139,12 @@ export default {
       showWorks: true,
 
       //壁纸
-      //   backgroundImage:''
+        backgroundImage:''
     }
   },
   onLoad() {
     //随机推荐一张壁纸
-    // this.getBackgroundImage()
+    this.getBackgroundImage()
 
     //时间显示
     this.timer = setInterval(() => {
@@ -122,11 +168,14 @@ export default {
           }
       )
     },
-    changeComment(){
+    changeComment() {
       this.showWorks = true
     },
-    changeTools(){
+    changeTools() {
       this.showWorks = false
+    },
+    goToLoginPage() {
+      goToLoginPage()
     }
   },
   beforeDestroy() {
@@ -139,7 +188,7 @@ export default {
 
 <style>
 .content {
-  background-image: url("../../static/backimg.jpg");
+  /*background-image: url("../../static/backimg.jpg");*/
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -233,14 +282,21 @@ export default {
   z-index: 1000;
 }
 
-.reflash {
-  position: absolute;
-  right: 50px;
-  top: 20px;
+.lFBox {
+  margin: 10px;
   cursor: pointer;
 }
 
-.navPageBox{
+.loginAndFlash {
+  position: absolute;
+  right: 50px;
+  top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navPageBox {
   position: absolute;
   left: 50%;
   bottom: 50px;
@@ -248,35 +304,60 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-   z-index: 20;
+  z-index: 20;
   padding: 0 7px;
   border-radius: 12px;
   transition: .25s;
   cursor: pointer;
 }
-.navPageBox:hover{
-  background-color: rgba(255,255,255,.1);
-  backdrop-filter: blur(10px)!important;
+
+.navPageBox:hover {
+  background-color: rgba(255, 255, 255, .1);
+  backdrop-filter: blur(10px) !important;
 }
-.navBox{
+
+.navBox {
   display: inline-block;
   padding: 10px 3px;
 }
 
-.nav{
+.nav {
   display: block;
   width: 30px;
   height: 5px;
-  background-color: rgba(0,0,0);
+  background-color: rgba(0, 0, 0);
   transition: .25s;
   border-radius: 2px;
 }
-.navBox:hover .nav{
-  background-color: rgba(255,255,255,.5);
-  backdrop-filter: blur(10px)!important;
+
+.navBox:hover .nav {
+  background-color: rgba(255, 255, 255, .5);
+  backdrop-filter: blur(10px) !important;
 }
-.navActive{
-  background-color: rgba(255,255,255,.5);
-  backdrop-filter: blur(10px)!important;
+
+.navActive {
+  background-color: rgba(255, 255, 255, .5);
+  backdrop-filter: blur(10px) !important;
+}
+
+.content-top {
+  color: black;
+  font-family: "Helvetica Neue", Helvetica, Tahoma, Arial, "PingFang SC", "Microsoft Yahei", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.contentSlotBox {
+
+}
+
+.content-bottom {
+  position: relative;
+  color: rgba(0, 0, 0, .8);
+  margin-top: 10px;
+  font-family: "Microsoft Yahei Light", "Microsoft Yahei", "PingFang SC", "Helvetica Neue", Helvetica, Tahoma, Arial, sans-serif;
 }
 </style>
