@@ -86,7 +86,6 @@ export default {
   animation: fadeIn .25s linear;
   height: 100vh;
   background-image: radial-gradient(transparent 0, rgba(0, 0, 0, .5) 100%), radial-gradient(transparent 33%, rgba(0, 0, 0, .3) 166%), url(https://assets.retiehe.com/blur/matterhorn.jpg)
-
 }
 
 .mainBox {
