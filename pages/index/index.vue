@@ -162,7 +162,12 @@ export default {
     },
     getNowTime() {
       let date = new Date()
-      this.dateTime = `${date.getHours()}:${date.getMinutes()}`
+      let hours = date.getHours()
+      let minutes = date.getMinutes()
+      if (minutes < 10) {
+        minutes+= "0";
+      }
+      this.dateTime = `${hours}:${minutes}`
       this.dateSeconds = `:${date.getSeconds()}`
     },
     getBackgroundImage() {
