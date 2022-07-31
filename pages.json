@@ -9,7 +9,7 @@
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "#fff",
-		"navigationBarTitleText": "uni-app",
+		"navigationBarTitleText": "鸢离起始页",
 		"navigationBarBackgroundColor": "#fff",
 		"backgroundColor": "#fff",
 		"navigationStyle":"custom"

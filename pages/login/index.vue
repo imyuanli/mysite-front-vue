@@ -17,7 +17,7 @@
             class="my-input"
         >
         </el-input>
-        <el-button class="btn" type="primary">注册&登录</el-button>
+        <el-button @click="getLogin" class="btn" type="primary">注册&登录</el-button>
 
         <el-button size="mini"
                    class="code-btn"
@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import {get_login, get_login_code} from "../../service/service";
+
 export default {
   data() {
     return {
@@ -48,7 +50,6 @@ export default {
   },
   methods: {
     getLoginCode() {
-      console.log(123123)
       if (!this.email) {
         this.$message({
           showClose: true,
@@ -75,7 +76,25 @@ export default {
           this.time = 60
         }
       }, 1000)
+      get_login_code({email:this.email}).then(
+          (res)=>{
+            console.log(res)
+          }
+      )
+    },
+    getLogin(){
+      get_login({
+        email:this.email,
+        login_code:this.code,
+      }).then(
+          (res)=>{
+            console.log(res)
+          }
+      )
     }
+  },
+  onLoad(){
+
   },
 };
 </script>
