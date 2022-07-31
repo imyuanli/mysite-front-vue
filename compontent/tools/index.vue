@@ -1,173 +1,17 @@
 <template>
   <view class="toolBox">
     <view :class="[toolsArr.length ==0?'carouselBox':'carouselBox noCenter']">
-      <view v-for="i in toolsArr" class="item">
+      <view v-for="(items,index) in toolsArr"
+            draggable="true"
+            @dragenter="handleDragEnter($event, items,index)"
+            @dragend="handleDragEnd($event, items,index)"
+            class="item"
+            :class="{active:enterIndex===index}"
+      >
         <view class="itemBox">
-          {{ i.icon }}
+          {{ items.icon }}
         </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
-      </view>
-      <view v-for="i in toolsArr" class="item">
-        <view class="itemBox">
-          {{ i.icon }}
-        </view>
-        <span>{{ i.name }}</span>
+        <span>{{ items.name }}</span>
       </view>
       <view class="item">
         <view class="itemBox">
@@ -191,14 +35,130 @@ export default {
     return {
       toolsArr: [
         {
+          name: '翻译1',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译2',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译3',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译4',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
           name: '翻译',
           icon: 'icon',
           url: 'https://fanyi.baidu.com/'
-        }
-      ]
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+        {
+          name: '翻译',
+          icon: 'icon',
+          url: 'https://fanyi.baidu.com/'
+        },
+      ],
+      enterIndex:"",
+      // startDrag:false
     }
   },
-
+  methods: {
+    // handleDragStart(){
+    //   this.startDrag = true
+    // },
+    handleDragEnd(e, item,index) {
+      let enterIndex = this.enterIndex
+      let tempOption = this.toolsArr[index];
+      this.$set(this.toolsArr, index, this.toolsArr[enterIndex]);
+      this.$set(this.toolsArr, enterIndex, tempOption)
+      this.enterIndex=null
+    },
+    handleDragEnter(e, item,index) {
+      this.enterIndex = index
+    },
+  }
 }
 </script>
 
@@ -312,5 +272,11 @@ export default {
   white-space: nowrap;
   width: 90%;
   margin: 5px;
+}
+.active{
+  transform: scale(1.1);
+}
+.startActive{
+  border: 1px solid red;
 }
 </style>

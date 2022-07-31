@@ -1,6 +1,6 @@
 <template>
-    <view class="content" :style="{'backgroundImage':`url(${backgroundImage})`}">
-<!--  <view class="content">-->
+<!--  <view class="content" :style="{'backgroundImage':`url(${backgroundImage})`}">-->
+      <view class="content">
     <view :class="[showLongInput?'contentBox showBlur':'contentBox']">
       <view>
         <view class="time">
@@ -16,7 +16,7 @@
                    :placeholder="showLongInput?'':'搜索'"/>
           </view>
         </view>
-        <view>
+        <view @touchstart="touchStart" @touchend="touchEnd">
           <view v-if="showWorks">
             <Tools/>
           </view>
@@ -43,7 +43,8 @@
                 换壁纸
               </view>
             </view>
-            <svg @click="getBackgroundImage" t="1659164995587" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+            <svg @click="getBackgroundImage" t="1659164995587" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                 xmlns="http://www.w3.org/2000/svg"
                  p-id="34667" width="22" height="22">
               <path
                   d="M265.476047 298.525672a31.565968 31.565968 0 0 1-22.336079-53.88942L477.611978 10.10111a31.601322 31.601322 0 0 1 44.684784 44.69741l-234.47201 234.47201a31.464957 31.464957 0 0 1-22.348705 9.255142zM254.933013 769.199507a31.464957 31.464957 0 0 1-22.336078-9.255142L31.951016 559.273194a31.601322 31.601322 0 1 1 44.684784-44.697411l200.645919 200.671171a31.565968 31.565968 0 0 1-22.348706 53.952553zM519.165418 1014.593342a31.565968 31.565968 0 0 1-22.348705-53.952553l225.684044-225.684044a31.606372 31.606372 0 1 1 44.697411 44.69741L541.514123 1005.3382a31.565968 31.565968 0 0 1-22.348705 9.255142zM984.826577 548.932182a31.477583 31.477583 0 0 1-22.336079-9.267768L718.977995 296.177164a31.597534 31.597534 0 0 1 44.684784-44.684784L1007.175282 494.97963a31.565968 31.565968 0 0 1-22.348705 53.952552z"
@@ -139,12 +140,15 @@ export default {
       showWorks: true,
 
       //壁纸
-        backgroundImage:''
+      backgroundImage: '',
+
+      //初始化点击位置的x坐标
+      startX: 0,
     }
   },
   onLoad() {
     //随机推荐一张壁纸
-    this.getBackgroundImage()
+    // this.getBackgroundImage()
 
     //时间显示
     this.timer = setInterval(() => {
@@ -174,21 +178,44 @@ export default {
     changeTools() {
       this.showWorks = false
     },
+    changePages(){
+      this.showWorks = !this.showWorks
+    },
     goToLoginPage() {
       goToLoginPage()
-    }
-  },
-  beforeDestroy() {
-    if (this.timer) {
-      clearInterval(this.timer); // 在Vue实例销毁前，清除我们的定时器
-    }
-  },
+    },
+    touchStart: function (e) {
+      if (e.touches.length == 1) {
+        //设置触摸起始点水平方向位置
+        this.startX = e.touches[0].clientX;
+      }
+    },
+    touchEnd: function (e) {
+      if (e.changedTouches.length == 1) {
+        //手指移动结束后水平位置
+        let endX = e.changedTouches[0].clientX;
+        let diff = endX - this.startX;
+        if (Math.abs(diff) > 30) {
+          if (diff > 0) {
+            this.changePages()
+          } else {
+            this.changePages()
+          }
+        }
+      }
+    },
+    beforeDestroy() {
+      if (this.timer) {
+        clearInterval(this.timer); // 在Vue实例销毁前，清除我们的定时器
+      }
+    },
+  }
 }
 </script>
 
 <style>
 .content {
-  /*background-image: url("../../static/backimg.jpg");*/
+  background-image: url("../../static/backimg.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -212,10 +239,12 @@ export default {
   font-weight: 200;
   text-shadow: 0 0 20px rgba(0, 0, 0, .35);
 }
-.time:hover{
+
+.time:hover {
   transform: translateX(-50%) scale(1.2);
 
 }
+
 .contentBox {
   width: 100%;
   height: 100%;
@@ -292,7 +321,7 @@ export default {
 
 .loginAndFlash {
   position: absolute;
-  right: 50px;
+  right: 3%;
   top: 20px;
   display: flex;
   justify-content: center;

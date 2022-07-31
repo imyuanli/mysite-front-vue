@@ -52,7 +52,7 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   top: 250px;
-  width: 100%;
+  width: 90%;
   max-width: 550px;
   height: calc(100vh - 340px);
   background-color: rgba(255, 255, 255, .6);
