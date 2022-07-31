@@ -1,6 +1,6 @@
 <template>
-<!--  <view class="content" :style="{'backgroundImage':`url(${backgroundImage})`}">-->
-      <view class="content">
+  <!--  <view class="content" :style="{'backgroundImage':`url(${backgroundImage})`}">-->
+  <view class="content">
     <view :class="[showLongInput?'contentBox showBlur':'contentBox']">
       <view>
         <view class="time">
@@ -76,7 +76,10 @@
                       d="M677.973333 599.466667a42.666667 42.666667 0 0 1-30.293333-12.373334l-45.653333-45.653333 60.586666-60.16 15.36 15.36 75.52-75.52a106.666667 106.666667 0 0 0 0-150.613333 108.8 108.8 0 0 0-151.04 0l-75.093333 75.52 13.226667 13.226666-60.16 60.586667-42.666667-42.666667a42.666667 42.666667 0 0 1 0-60.16l105.813333-105.813333a192 192 0 0 1 271.36 271.786667l-106.666666 104.106666a42.666667 42.666667 0 0 1-30.293334 12.373334zM346.026667 869.546667a192 192 0 0 1-135.68-327.68l105.813333-105.813334a42.666667 42.666667 0 0 1 60.16 0l45.653333 45.653334-60.16 60.586666-15.786666-15.36-75.093334 75.093334a106.666667 106.666667 0 0 0 150.613334 151.04l75.52-75.52-13.653334-13.653334 60.16-60.16 42.666667 42.666667a42.666667 42.666667 0 0 1 0 60.586667l-104.106667 106.24a191.573333 191.573333 0 0 1-136.106666 56.32zM701.44 884.906667a42.666667 42.666667 0 0 1-42.666667-31.573334l-23.893333-88.746666a42.666667 42.666667 0 0 1 82.346667-22.186667l23.893333 88.746667a42.666667 42.666667 0 0 1-30.293333 52.48 46.506667 46.506667 0 0 1-9.386667 1.28zM847.786667 738.986667a34.986667 34.986667 0 0 1-11.093334 0l-88.746666-23.893334a42.666667 42.666667 0 0 1-30.293334-52.053333 42.666667 42.666667 0 0 1 52.48-30.293333l88.746667 23.893333a42.666667 42.666667 0 0 1-11.093333 85.333333zM265.813333 394.24a46.506667 46.506667 0 0 1-11.093333 0l-89.173333-25.173333a42.666667 42.666667 0 0 1 22.186666-82.346667l88.746667 23.893333a42.666667 42.666667 0 0 1-10.666667 85.333334zM346.88 312.746667a42.666667 42.666667 0 0 1-42.666667-31.573334l-22.186666-88.746666a42.666667 42.666667 0 0 1 30.293333-52.48A42.666667 42.666667 0 0 1 364.373333 170.666667l23.893334 88.32a42.666667 42.666667 0 0 1-30.293334 52.48 46.506667 46.506667 0 0 1-11.093333 1.28z"
                       p-id="32102" fill="#8a8a8a"></path>
                 </svg>
-                您还没有登录
+                您还没有
+                <span @click="goToLoginPage"
+                      style="color: #007aff;cursor: pointer"
+                >登录</span>
               </view>
               <view class="content-bottom">
                 登录后即可获得自定义网站捷径及众多功能
@@ -91,6 +94,12 @@
             </svg>
           </el-tooltip>
         </view>
+      </view>
+      <view class="dingTag">
+        添加的dingtag
+      </view>
+      <view class="footer">
+        {{ dateYear }} © 鸢离
       </view>
     </view>
   </view>
@@ -134,6 +143,7 @@ export default {
       dateTime: '',
       dateSeconds: "",
       showSeconds: false,
+      dateYear: "",
       timer: "",
 
       //作品和评论及DING
@@ -165,10 +175,11 @@ export default {
       let hours = date.getHours()
       let minutes = date.getMinutes()
       if (minutes < 10) {
-        minutes+= "0";
+        minutes += "0";
       }
       this.dateTime = `${hours}:${minutes}`
       this.dateSeconds = `:${date.getSeconds()}`
+      this.dateYear = date.getFullYear()
     },
     getBackgroundImage() {
       get_background_mage().then(
@@ -183,7 +194,7 @@ export default {
     changeTools() {
       this.showWorks = false
     },
-    changePages(){
+    changePages() {
       this.showWorks = !this.showWorks
     },
     goToLoginPage() {
@@ -387,14 +398,29 @@ export default {
   align-items: center;
 }
 
-.contentSlotBox {
-
-}
-
 .content-bottom {
   position: relative;
   color: rgba(0, 0, 0, .8);
   margin-top: 10px;
   font-family: "Microsoft Yahei Light", "Microsoft Yahei", "PingFang SC", "Helvetica Neue", Helvetica, Tahoma, Arial, sans-serif;
 }
+
+.footer {
+  display: inline-block;
+  border-radius: 2px;
+  backdrop-filter: blur(10px);
+  animation: delayedFadeIn 1s;
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: fit-content;
+  font-size: 14px;
+  color: rgba(255, 255, 255, .6);
+  text-align: center;
+  text-shadow: 0 0 20px rgb(0 0 0 / 80%);
+  white-space: nowrap;
+  padding: 3px 10px;
+}
+
 </style>
