@@ -11,7 +11,7 @@
         </svg>
       </view>
     </view>
-    <textarea class="mytextarea" placeholder="和平交流 or Ding一下固定在屏幕左上角"
+    <textarea class="mytextarea" placeholder="友善交流 or Ding一下固定在屏幕左上角"
               name=""
               id=""
               cols="100%" rows="100%"

@@ -68,7 +68,7 @@
           <el-tooltip class="item"
                       effect="light"
                       placement="bottom-end">
-            <view slot="content" class="contentSlotBox">
+            <view v-if="!haveToken" slot="content" class="contentSlotBox">
               <view class="content-top">
                 <svg t="1659164183161" class="icon" viewBox="0 0 1024 1024" version="1.1"
                      xmlns="http://www.w3.org/2000/svg" p-id="32101" width="25" height="25">
@@ -85,6 +85,16 @@
                 登录后即可获得自定义网站捷径及众多功能
               </view>
             </view>
+            <view v-if="haveToken" slot="content" class="contentSlotBox">
+              <view class="userInfo" @click="showDialog">
+                <span class="userName">鸢离</span>
+                <span>账号管理</span>
+              </view>
+              <view class="userInfo">
+               自定义设置
+              </view>
+              <view class="userInfo" @click="logOut">退出登录</view>
+            </view>
             <svg @click="goToLoginPage" t="1659162872590" class="icon" viewBox="0 0 1039 1024" version="1.1"
                  xmlns="http://www.w3.org/2000/svg"
                  p-id="29706" width="25" height="25">
@@ -95,9 +105,38 @@
           </el-tooltip>
         </view>
       </view>
-      <view class="dingTag">
-        添加的dingtag
+      <view>
+        <el-dialog
+            title="提示"
+            :visible.sync="dialogVisible"
+            :before-close="handleClose">
+          <view class="dialog-info">
+            <view class="info-item">
+              邮箱
+              <span class="info-text">2865437316@qq.com</span>
+              <i class="info-icon el-icon-document-copy"></i>
+            </view>
+            <view class="info-item">
+              邮箱
+              <span class="info-text">2865437316@qq.com</span>
+              <i class="info-icon el-icon-document-copy"></i>
+            </view>
+            <view class="info-item">
+              邮箱
+              <span class="info-text">2865437316@qq.com</span>
+              <i class="info-icon el-icon-document-copy"></i>
+            </view>
+            <view class="info-item">
+              邮箱
+              <span class="info-text">2865437316@qq.com</span>
+              <i class="info-icon el-icon-document-copy"></i>
+            </view>
+          </view>
+        </el-dialog>
       </view>
+<!--      <view class="dingTag">-->
+<!--        添加的dingtag-->
+<!--      </view>-->
       <view class="footer">
         {{ dateYear }} © 鸢离
       </view>
@@ -109,12 +148,15 @@
 import {get_background_mage} from "../../service/service";
 import Tools from '../../compontent/tools'
 import Comments from '../../compontent/comments'
+import Userinfo from '../../compontent/userInfo'
 import {goToLoginPage} from '../../utils/routers'
+import store from "store";
 
 export default {
   components: {
     Tools,
-    Comments
+    Comments,
+    Userinfo
   },
   data() {
     return {
@@ -145,26 +187,31 @@ export default {
       showSeconds: false,
       dateYear: "",
       timer: "",
-
       //作品和评论及DING
       showWorks: true,
-
       //壁纸
       backgroundImage: '',
-
       //初始化点击位置的x坐标
       startX: 0,
+      haveToken:store.get('token')?true:'',
+      dialogVisible:false
     }
   },
   onLoad() {
     //随机推荐一张壁纸
     // this.getBackgroundImage()
-
     //时间显示
     this.timer = setInterval(() => {
       this.getNowTime()
     }, 1000);
-
+    if(store.get('token')){
+      this.haveToken = true
+    }
+  },
+  onShow(){
+    if(store.get('token')){
+      this.haveToken = true
+    }
   },
   methods: {
     handleClick() {
@@ -220,12 +267,22 @@ export default {
         }
       }
     },
-    beforeDestroy() {
-      if (this.timer) {
-        clearInterval(this.timer); // 在Vue实例销毁前，清除我们的定时器
-      }
+    showDialog(){
+      this.dialogVisible = true
     },
-  }
+    handleClose(){
+      this.dialogVisible = false
+    },
+    logOut(){
+      store.remove('token')
+      location.reload()
+    }
+  },
+  onHide() {
+    if (this.timer) {
+      clearInterval(this.timer); // 在Vue实例销毁前，清除我们的定时器
+    }
+  },
 }
 </script>
 
@@ -423,4 +480,82 @@ export default {
   padding: 3px 10px;
 }
 
+.userInfo {
+  padding: 10px 15px;
+  border-radius: 5px;
+  color:black;
+  font-size: 12px;
+  transition: .25s;
+  width: 100px;
+  cursor: pointer;
+}
+.userInfo:hover{
+  background-color: rgba(0,0,0,.1);
+}
+.userName{
+  display: block;
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/deep/.el-dialog{
+  max-width: 600px;
+  width: 90%;
+  background-color: rgb(245,245,245);
+  font-size: small;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: rgb(0 0 0 / 5%) 0 10px 20px;
+  transition: .25s;
+}
+/deep/ .el-dialog__header {
+  padding: 40px 30px 10px;
+}
+/deep/ .el-dialog__headerbtn {
+  position: absolute;
+  top: 20px;
+  right: 15px;
+  padding: 0;
+  background: 0 0;
+  border: none;
+  outline: 0;
+  cursor: pointer;
+  font-size: 25px;
+}
+
+.dialog-info{
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background-color: white;
+  padding: 12px 30px;
+}
+.info-item{
+  position: relative;
+  padding: 8px 0;
+  color: rgba(0,0,0,.35);
+  font-size:13px ;
+}
+.info-text{
+  position: absolute;
+  left: 55px;
+  max-width: calc(100% - 85px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(0,0,0,.6);
+}
+
+.info-icon{
+  position: absolute;
+  right: 0;
+  padding-left: 14px;
+
+  font-size: 16px;
+  transition: .25s;
+  cursor: pointer;
+}
+.info-icon:hover{
+  color: #70C000;
+}
 </style>

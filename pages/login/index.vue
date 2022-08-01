@@ -1,5 +1,5 @@
 <template>
-  <view class="main">
+  <view class="main" v-loading="loading">
     <view class="mainBox">
       <view class="title">登录</view>
       <view class="inputBox">
@@ -38,14 +38,16 @@
 
 <script>
 import {get_login, get_login_code} from "../../service/service";
-
+import  store from 'store'
+import {redirectToIndex} from "../../utils/routers";
 export default {
   data() {
     return {
       email: '',
       code: '',
       time: 60,
-      interval: ''
+      interval: '',
+      loading:false
     };
   },
   methods: {
@@ -83,18 +85,44 @@ export default {
       )
     },
     getLogin(){
+      const { email, code } = this;
+      if (!email) {
+        this.$message({
+          showClose: true,
+          message: '邮箱不能为空',
+          type: 'warning'
+        });
+        return;
+      }
+      if (!code) {
+        this.$message({
+          showClose: true,
+          message: '验证码不能为空',
+          type: 'warning'
+        });
+        return;
+      }
+      this.loading = true
       get_login({
         email:this.email,
         login_code:this.code,
       }).then(
           (res)=>{
-            console.log(res)
+            if(res){
+              store.set('token',res.token)
+              redirectToIndex()
+            }
+            else{
+              this.loading = false
+            }
           }
       )
     }
   },
   onLoad(){
-
+    if(store.get('token')){
+      redirectToIndex()
+    }
   },
 };
 </script>
