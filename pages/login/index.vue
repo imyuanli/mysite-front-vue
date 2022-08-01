@@ -18,7 +18,6 @@
         >
         </el-input>
         <el-button @click="getLogin" class="btn" type="primary">注册&登录</el-button>
-
         <el-button size="mini"
                    class="code-btn"
                    type="primary"

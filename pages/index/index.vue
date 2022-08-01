@@ -1,8 +1,8 @@
 <template>
-  <!--  <view class="content" :style="{'backgroundImage':`url(${backgroundImage})`}">-->
-  <view class="content">
+    <view class="content" :style="{'backgroundImage':`url(${backgroundImage})`}">
+<!--  <view class="content">-->
     <view :class="[showLongInput?'contentBox showBlur':'contentBox']">
-      <view>
+      <view >
         <view class="time">
           <span>{{ dateTime }}</span>
           <span v-if="showSeconds">{{ dateSeconds }}</span>
@@ -16,20 +16,22 @@
                    :placeholder="showLongInput?'':'搜索'"/>
           </view>
         </view>
-        <view @touchstart="touchStart" @touchend="touchEnd">
-          <view v-if="showWorks">
-            <Tools/>
+        <view v-if="!showLongInput">
+          <view @touchstart="touchStart" @touchend="touchEnd">
+            <view v-if="showWorks">
+              <Tools/>
+            </view>
+            <view v-if="!showWorks">
+              <Comments/>
+            </view>
           </view>
-          <view v-if="!showWorks">
-            <Comments/>
-          </view>
-        </view>
-        <view class="navPageBox">
-          <view class="navBox" @click="changeComment">
-            <span :class="[showWorks?'nav navActive':'nav']"></span>
-          </view>
-          <view class="navBox" @click="changeTools">
-            <span :class="[showWorks?'nav':'nav navActive']" class="nav"></span>
+          <view class="navPageBox">
+            <view class="navBox" @click="changeComment">
+              <span :class="[showWorks?'nav navActive':'nav']"></span>
+            </view>
+            <view class="navBox" @click="changeTools">
+              <span :class="[showWorks?'nav':'nav navActive']" class="nav"></span>
+            </view>
           </view>
         </view>
       </view>
@@ -38,30 +40,30 @@
           <el-tooltip class="item"
                       effect="light"
                       placement="bottom">
-            <view slot="content" class="contentSlotBox">
+            <view v-if="!selfImage" slot="content" class="contentSlotBox">
               <view class="content-bottom">
-                换壁纸
+                将当前壁纸设为永久
               </view>
             </view>
-            <svg @click="getBackgroundImage" t="1659164995587" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                 xmlns="http://www.w3.org/2000/svg"
-                 p-id="34667" width="22" height="22">
-              <path
-                  d="M265.476047 298.525672a31.565968 31.565968 0 0 1-22.336079-53.88942L477.611978 10.10111a31.601322 31.601322 0 0 1 44.684784 44.69741l-234.47201 234.47201a31.464957 31.464957 0 0 1-22.348705 9.255142zM254.933013 769.199507a31.464957 31.464957 0 0 1-22.336078-9.255142L31.951016 559.273194a31.601322 31.601322 0 1 1 44.684784-44.697411l200.645919 200.671171a31.565968 31.565968 0 0 1-22.348706 53.952553zM519.165418 1014.593342a31.565968 31.565968 0 0 1-22.348705-53.952553l225.684044-225.684044a31.606372 31.606372 0 1 1 44.697411 44.69741L541.514123 1005.3382a31.565968 31.565968 0 0 1-22.348705 9.255142zM984.826577 548.932182a31.477583 31.477583 0 0 1-22.336079-9.267768L718.977995 296.177164a31.597534 31.597534 0 0 1 44.684784-44.684784L1007.175282 494.97963a31.565968 31.565968 0 0 1-22.348705 53.952552z"
-                  fill="#cdcdcd" p-id="34668"></path>
-              <path
-                  d="M509.809265 533.780518a31.565968 31.565968 0 0 1-31.565968-31.565968V31.603847a31.565968 31.565968 0 0 1 31.565968-31.565968h470.547571a31.565968 31.565968 0 0 1 22.348705 53.939926L532.107465 524.550629a31.565968 31.565968 0 0 1-22.2982 9.229889z m31.565968-470.610703v362.743477L904.068205 63.207694z"
-                  fill="#cdcdcd" p-id="34669"></path>
-              <path
-                  d="M980.356836 1024a31.565968 31.565968 0 0 1-22.310826-9.255142L487.410054 544.134155a31.565968 31.565968 0 0 1 22.399211-53.952552h470.547571a31.565968 31.565968 0 0 1 31.565968 31.565968v470.648582a31.654353 31.654353 0 0 1-19.507768 29.204833 31.995265 31.995265 0 0 1-12.0582 2.399014zM586.060017 553.401924l362.692972 362.692971V553.401924z"
-                  fill="#cdcdcd" p-id="34670"></path>
-              <path
-                  d="M509.809265 1004.391221H39.160683a31.565968 31.565968 0 0 1-22.348705-53.939926l470.598076-470.610703a31.565968 31.565968 0 0 1 53.965179 22.373958v470.572824a31.565968 31.565968 0 0 1-31.565968 31.603847zM115.449314 941.183527h362.705598V578.477928z"
-                  fill="#cdcdcd" p-id="34671"></path>
-              <path
-                  d="M509.809265 553.401924H39.160683a31.565968 31.565968 0 0 1-31.565968-31.565968V51.187374a31.565968 31.565968 0 0 1 53.939926-22.348706l470.572824 470.610703a31.565968 31.565968 0 0 1-22.2982 53.952553zM70.76453 490.181603h362.692972L70.76453 127.488631z"
-                  fill="#cdcdcd" p-id="34672"></path>
-            </svg>
+            <view v-if="selfImage" slot="content" class="contentSlotBox">
+              <view class="content-bottom">
+                当前壁纸为永久，再次点击将随机切换
+              </view>
+            </view>
+            <i v-if="!selfImage" @click="saveCurrentImage" class="el-icon-star-off icon-btn"></i>
+            <i v-if="selfImage" @click="delCurrentImage" class="el-icon-star-on icon-btn"></i>
+          </el-tooltip>
+        </view>
+        <view class="lFBox">
+          <el-tooltip class="item"
+                      effect="light"
+                      placement="bottom">
+            <view slot="content" class="contentSlotBox">
+              <view class="content-bottom">
+                随机切换一张壁纸
+              </view>
+            </view>
+            <i @click="getBackgroundImage" class="el-icon-picture-outline icon-btn"></i>
           </el-tooltip>
         </view>
         <view class="lFBox">
@@ -91,52 +93,50 @@
                 <span>账号管理</span>
               </view>
               <view class="userInfo">
-               自定义设置
+                自定义设置
               </view>
               <view class="userInfo" @click="logOut">退出登录</view>
             </view>
-            <svg @click="goToLoginPage" t="1659162872590" class="icon" viewBox="0 0 1039 1024" version="1.1"
-                 xmlns="http://www.w3.org/2000/svg"
-                 p-id="29706" width="25" height="25">
-              <path
-                  d="M462.619289 83.68731c-12.994924 2.598985-40.024365 12.994924-60.816243 22.871066C284.328934 164.255838 244.824365 313.437563 317.076142 425.193909c97.721827 151.780711 335.788832 127.870051 402.322843-40.544163C783.853807 221.433503 637.790863 49.900508 462.619289 83.68731zM369.055838 570.217259c-115.394924 20.791878-212.596954 114.35533-236.507615 227.671066-8.836548 42.62335-9.876142 82.127919-2.598984 96.682233 7.796954 14.034518 40.544162 29.108629 78.48934 36.385787 47.82132 8.316751 429.872081 12.475127 534.871066 5.19797 133.587817-8.316751 166.335025-23.390863 166.335025-75.370559-0.519797-72.251777-29.628426-145.543147-78.48934-198.042639-36.385787-38.464975-70.172589-61.336041-117.993909-80.048731-34.306599-12.994924-37.945178-12.994924-182.968528-14.034518-81.608122-0.519797-153.859898 0-161.137055 1.559391z"
-                  p-id="29707" fill="#cdcdcd"></path>
-            </svg>
+            <i @click="goToLoginPage" class="el-icon-user-solid icon-btn"></i>
           </el-tooltip>
         </view>
       </view>
       <view>
         <el-dialog
-            title="提示"
             :visible.sync="dialogVisible"
             :before-close="handleClose">
+          <view slot="title" class="header-title">
+            欢迎你，<span style="color:#70C000;">{{userName}}</span>
+          </view>
           <view class="dialog-info">
             <view class="info-item">
               邮箱
-              <span class="info-text">2865437316@qq.com</span>
+              <span class="info-text">{{ email }}</span>
               <i class="info-icon el-icon-document-copy"></i>
             </view>
             <view class="info-item">
-              邮箱
-              <span class="info-text">2865437316@qq.com</span>
+              UID
+              <span class="info-text">{{ uid }}</span>
               <i class="info-icon el-icon-document-copy"></i>
             </view>
             <view class="info-item">
-              邮箱
-              <span class="info-text">2865437316@qq.com</span>
-              <i class="info-icon el-icon-document-copy"></i>
+              昵称
+              <span v-if="!isChangeName"  class="info-text">{{ userName }}</span>
+              <el-input class="info-text update" v-if="isChangeName" v-model="changeNameValue" type="text" />
+              <i v-if="!isChangeName" @click="showUpdate"  class="info-icon el-icon-edit"></i>
+              <span @click="updateUserName" v-if="isChangeName" class="info-edit info-icon">保存</span>
             </view>
             <view class="info-item">
-              邮箱
-              <span class="info-text">2865437316@qq.com</span>
+              创建时间
+              <span class="info-text">{{ createTime }}</span>
               <i class="info-icon el-icon-document-copy"></i>
             </view>
           </view>
         </el-dialog>
       </view>
-<!--      <view class="dingTag">-->
-<!--        添加的dingtag-->
-<!--      </view>-->
+      <!--      <view class="dingTag">-->
+      <!--        添加的dingtag-->
+      <!--      </view>-->
       <view class="footer">
         {{ dateYear }} © 鸢离
       </view>
@@ -145,7 +145,7 @@
 </template>
 
 <script>
-import {get_background_mage} from "../../service/service";
+import {get_background_mage, get_user_info, save_current_image, update_info} from "../../service/service";
 import Tools from '../../compontent/tools'
 import Comments from '../../compontent/comments'
 import Userinfo from '../../compontent/userInfo'
@@ -193,25 +193,55 @@ export default {
       backgroundImage: '',
       //初始化点击位置的x坐标
       startX: 0,
-      haveToken:store.get('token')?true:'',
-      dialogVisible:false
+      haveToken: store.get('token'),
+      dialogVisible: false,
+      userInfo: [],
+      userName: '',
+      email: '',
+      uid: '',
+      createTime: '',
+
+      isChangeName:false,
+      changeNameValue:"",
+      selfImage:false,  //false
     }
   },
   onLoad() {
-    //随机推荐一张壁纸
-    // this.getBackgroundImage()
     //时间显示
     this.timer = setInterval(() => {
       this.getNowTime()
     }, 1000);
-    if(store.get('token')){
+    if (store.get('token')) {
       this.haveToken = true
     }
+
   },
-  onShow(){
-    if(store.get('token')){
+  onShow() {
+    if (store.get('token')) {
       this.haveToken = true
+      get_user_info().then(
+          (res) => {
+            if (res) {
+              this.userName = res.user_name
+              this.email = res.email
+              this.uid = res.uid
+              this.createTime = res.create_time.split("T")[0]
+              if(res.background_image !== "null"){
+                  this.selfImage = true
+                  this.backgroundImage = res.background_image
+              }
+              else{
+                this.getBackgroundImage()
+              }
+            }
+          }
+      )
     }
+    //没有登录也是随机刷新
+    else{
+      this.getBackgroundImage()
+    }
+
   },
   methods: {
     handleClick() {
@@ -222,7 +252,7 @@ export default {
       let hours = date.getHours()
       let minutes = date.getMinutes()
       if (minutes < 10) {
-        minutes += "0";
+        minutes = "0"+minutes;
       }
       this.dateTime = `${hours}:${minutes}`
       this.dateSeconds = `:${date.getSeconds()}`
@@ -231,6 +261,9 @@ export default {
     getBackgroundImage() {
       get_background_mage().then(
           (res) => {
+            if(this.selfImage) {
+              this.delCurrentImage()
+            }
             this.backgroundImage = res
           }
       )
@@ -267,15 +300,51 @@ export default {
         }
       }
     },
-    showDialog(){
+    showDialog() {
       this.dialogVisible = true
     },
-    handleClose(){
+    handleClose() {
       this.dialogVisible = false
     },
-    logOut(){
+    logOut() {
       store.remove('token')
       location.reload()
+    },
+    showUpdate(){
+      this.isChangeName = true
+      this.changeNameValue = this.userName
+    },
+    updateUserName(){
+      update_info({user_name:this.changeNameValue}).then(
+          (res)=>{
+            if(res){
+              this.userName = res
+              this.isChangeName = false
+            }
+          }
+      )
+    },
+    //将当前壁纸设为永久
+    saveCurrentImage(){
+      save_current_image({background_image:this.backgroundImage}).then(
+          (res)=>{
+            if(res){
+              this.selfImage = true
+            }
+          }
+      )
+    },
+
+    //取消当前的永久壁纸
+    delCurrentImage(){
+      save_current_image({background_image:''}).then(
+          (res)=>{
+            if(res){
+              this.selfImage = false
+              this.getBackgroundImage()
+            }
+          }
+      )
     }
   },
   onHide() {
@@ -388,7 +457,7 @@ export default {
 }
 
 .lFBox {
-  margin: 10px;
+  margin: 15px;
   cursor: pointer;
 }
 
@@ -483,16 +552,18 @@ export default {
 .userInfo {
   padding: 10px 15px;
   border-radius: 5px;
-  color:black;
+  color: black;
   font-size: 12px;
   transition: .25s;
   width: 100px;
   cursor: pointer;
 }
-.userInfo:hover{
-  background-color: rgba(0,0,0,.1);
+
+.userInfo:hover {
+  background-color: rgba(0, 0, 0, .1);
 }
-.userName{
+
+.userName {
   display: block;
   font-size: 16px;
   white-space: nowrap;
@@ -500,18 +571,22 @@ export default {
   text-overflow: ellipsis;
 }
 
-/deep/.el-dialog{
+/deep/ .el-dialog {
   max-width: 600px;
   width: 90%;
-  background-color: rgb(245,245,245);
+  background-color: rgb(245, 245, 245);
   font-size: small;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: rgb(0 0 0 / 5%) 0 10px 20px;
   transition: .25s;
 }
+
 /deep/ .el-dialog__header {
   padding: 40px 30px 10px;
+}
+/deep/ .el-dialog__body{
+  padding: 20px;
 }
 /deep/ .el-dialog__headerbtn {
   position: absolute;
@@ -525,37 +600,79 @@ export default {
   font-size: 25px;
 }
 
-.dialog-info{
+.dialog-info {
   margin-bottom: 10px;
   border-radius: 10px;
   background-color: white;
   padding: 12px 30px;
 }
-.info-item{
+
+.info-item {
   position: relative;
-  padding: 8px 0;
-  color: rgba(0,0,0,.35);
-  font-size:13px ;
+  padding: 10px 0;
+  color: rgba(0, 0, 0, .35);
+  font-size: 13px;
 }
-.info-text{
+
+.info-text {
   position: absolute;
-  left: 55px;
+  left: 70px;
   max-width: calc(100% - 85px);
   overflow: hidden;
   text-overflow: ellipsis;
-  color: rgba(0,0,0,.6);
+  color: rgba(0, 0, 0, .6);
 }
 
-.info-icon{
+.info-icon {
   position: absolute;
   right: 0;
   padding-left: 14px;
 
-  font-size: 16px;
   transition: .25s;
   cursor: pointer;
 }
-.info-icon:hover{
+
+.info-icon:hover {
   color: #70C000;
+}
+.info-edit{
+  color: #70C000;
+}
+.header-title{
+  color: black;
+  font-size: 26px;
+  font-family: "Helvetica Neue",Helvetica,Tahoma,Arial,"PingFang SC","Microsoft Yahei",sans-serif;
+  transition: .25s;
+}
+
+/deep/ .el-input__inner:focus {
+  border-bottom: solid 1px #70C000;
+}
+/deep/ .el-input__inner{
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  display: inline-block;
+  font-size: inherit;
+  height: 20px;
+  line-height: 20px;
+  outline: 0;
+  /* padding: 0 15px; */
+  width: 200px;
+  border: none;
+  border-radius: 0;
+  border-bottom: solid 1px rgba(0,0,0,.1);
+  color: black;
+  background-color: white;
+  transition: .25s;
+}
+.icon-btn{
+  display: inline-block;
+  font-size: 26px;
+  color: rgba(255,255,255,.35);
+  cursor: pointer;
+  transition: .25s;
+}
+.icon-btn:hover{
+  color: rgba(255,255,255,.75)
 }
 </style>
