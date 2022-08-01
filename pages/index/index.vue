@@ -204,9 +204,6 @@ export default {
       isChangeName:false,
       changeNameValue:"",
       selfImage:false,  //false
-
-    //  下拉框
-      testDisabled:false,
     }
   },
   onLoad() {
@@ -238,7 +235,6 @@ export default {
     else{
       this.getBackgroundImage()
     }
-
   },
   methods: {
     handleClick() {
@@ -601,7 +597,7 @@ export default {
   margin-bottom: 10px;
   border-radius: 10px;
   background-color: white;
-  padding: 12px 22px;
+  padding: 12px 30px;
 }
 
 .info-item {

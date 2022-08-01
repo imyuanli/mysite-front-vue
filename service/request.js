@@ -3,6 +3,7 @@ import store from 'store'
 import {
   Message,
 } from 'element-ui'
+import {goToLoginPage} from "../utils/routers";
 const HTTP_STATUS = {
   SUCCESS: 200,
   CREATED: 201,
@@ -42,12 +43,13 @@ function request(url, data = {}, method = 'GET') {
             message: res.data.errmsg,
           })
         }
-        else if (res.data.errno === 999) {
+        else if (res.data.errno === 99) {
           Message({
             message: res.data.errmsg,
             type: 'error',
             duration: 5 * 1000
           })
+          goToLoginPage(window.location.href)
           // history.push(`/login?redirect=${window.location.href}`)
         }
       }
