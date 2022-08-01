@@ -113,7 +113,7 @@ export default {
   outline: 0;
   transition: .25s;
   cursor: pointer;
-  margin: 10px;
+  margin: 8px;
   display: flex;
   justify-content: center;
   align-items: center;

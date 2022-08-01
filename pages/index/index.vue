@@ -204,6 +204,9 @@ export default {
       isChangeName:false,
       changeNameValue:"",
       selfImage:false,  //false
+
+    //  下拉框
+      testDisabled:false,
     }
   },
   onLoad() {
@@ -211,12 +214,6 @@ export default {
     this.timer = setInterval(() => {
       this.getNowTime()
     }, 1000);
-    if (store.get('token')) {
-      this.haveToken = true
-    }
-
-  },
-  onShow() {
     if (store.get('token')) {
       this.haveToken = true
       get_user_info().then(
@@ -227,8 +224,8 @@ export default {
               this.uid = res.uid
               this.createTime = res.create_time.split("T")[0]
               if(res.background_image !== "null"){
-                  this.selfImage = true
-                  this.backgroundImage = res.background_image
+                this.selfImage = true
+                this.backgroundImage = res.background_image
               }
               else{
                 this.getBackgroundImage()
@@ -604,7 +601,7 @@ export default {
   margin-bottom: 10px;
   border-radius: 10px;
   background-color: white;
-  padding: 12px 30px;
+  padding: 12px 22px;
 }
 
 .info-item {
