@@ -1,11 +1,11 @@
 <template>
-    <view class="content" :style="{'backgroundImage':`url(${backgroundImage})`}">
-<!--  <view class="content">-->
+  <view class="content" :style="{'backgroundImage':`url(${backgroundImage})`}">
+    <!--  <view class="content">-->
     <view :class="[showLongInput?'contentBox showBlur':'contentBox']">
-      <view >
+      <view>
         <view class="time">
           <span>{{ dateTime }}</span>
-          <span v-if="showSeconds">{{ dateSeconds }}</span>
+          <span v-show="showSeconds">{{ dateSeconds }}</span>
         </view>
         <view :class="[showLongInput?'inputBox longInput ':'inputBox shortInput']">
           <view class="searchBar">
@@ -16,12 +16,12 @@
                    :placeholder="showLongInput?'':'搜索'"/>
           </view>
         </view>
-        <view v-if="!showLongInput">
+        <view v-show="!showLongInput">
           <view @touchstart="touchStart" @touchend="touchEnd">
-            <view v-if="showWorks">
+            <view v-show="showWorks">
               <Tools/>
             </view>
-            <view v-if="!showWorks">
+            <view v-show="!showWorks">
               <Comments/>
             </view>
           </view>
@@ -66,7 +66,7 @@
             <i @click="getBackgroundImage" class="el-icon-picture-outline icon-btn"></i>
           </el-tooltip>
         </view>
-        <view class="lFBox">
+        <view v-if="!haveToken" class="lFBox">
           <el-tooltip class="item"
                       effect="light"
                       placement="bottom-end">
@@ -100,43 +100,66 @@
             <i @click="goToLoginPage" class="el-icon-user-solid icon-btn"></i>
           </el-tooltip>
         </view>
+        <view v-if="haveToken" class="lFBox">
+          <el-popover
+              placement="bottom"
+              width="150"
+              trigger="click">
+            <view>
+              <view class="userInfo" @click="showDialog">
+                <span class="userName">鸢离</span>
+                <span>账号管理</span>
+              </view>
+              <view class="userInfo">
+                自定义设置
+              </view>
+              <view class="userInfo" @click="logOut">退出登录</view>
+            </view>
+            <i slot="reference" class="el-icon-user-solid icon-btn"></i>
+          </el-popover>
+        </view>
       </view>
-      <view>
-        <el-dialog
-            :visible.sync="dialogVisible"
-            :before-close="handleClose">
-          <view slot="title" class="header-title">
-            欢迎你，<span style="color:#70C000;">{{userName}}</span>
-          </view>
-          <view class="dialog-info">
-            <view class="info-item">
-              邮箱
-              <span class="info-text">{{ email }}</span>
-              <i class="info-icon el-icon-document-copy"></i>
-            </view>
-            <view class="info-item">
-              UID
-              <span class="info-text">{{ uid }}</span>
-              <i class="info-icon el-icon-document-copy"></i>
-            </view>
-            <view class="info-item">
-              昵称
-              <span v-if="!isChangeName"  class="info-text">{{ userName }}</span>
-              <el-input class="info-text update" v-if="isChangeName" v-model="changeNameValue" type="text" />
-              <i v-if="!isChangeName" @click="showUpdate"  class="info-icon el-icon-edit"></i>
+      <el-dialog
+          :visible.sync="dialogVisible"
+          :before-close="handleClose">
+        <view slot="title" class="header-title">
+          欢迎你，<span style="color:#70C000;">{{ userName }}</span>
+        </view>
+        <view class="dialog-info">
+          <view class="dialog-title">基础信息</view>
+          <view v-for="i in info" :key="i.name" class="info-item">
+            <view v-if="i.should_edit == 'true'">
+              <span>{{ i.name }}</span>
+              <span v-if="!isChangeName" class="info-text">{{ i.data }}</span>
+              <el-input class="info-text update" v-if="isChangeName" v-model="changeNameValue" type="text"/>
+              <i v-if="!isChangeName" @click="showUpdate" class="info-icon el-icon-edit"></i>
               <span @click="updateUserName" v-if="isChangeName" class="info-edit info-icon">保存</span>
             </view>
-            <view class="info-item">
-              创建时间
-              <span class="info-text">{{ createTime }}</span>
+            <view v-else>
+              <span>{{ i.name }}</span>
+              <span class="info-text">{{ i.data }}</span>
               <i class="info-icon el-icon-document-copy"></i>
             </view>
           </view>
-        </el-dialog>
+        </view>
+        <view class="dialog-info">
+          <view class="dialog-title">常规设置</view>
+          <view @click="updateSetting(i,index)" v-for="(i,index) in basic_settings" :key="i.type"
+                class="info-item basic">
+            <span>{{ i.name }}</span>
+            <i v-if="i.data == 1" class="basic_icon basic_true el-icon-open"></i>
+            <i v-else class="basic_icon  el-icon-turn-off"></i>
+          </view>
+        </view>
+      </el-dialog>
+      <view class="dingTag">
+        <view class="tabs">
+          <view class="box shadow">
+            <view>鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客</view>
+            <view class="circle"></view>
+          </view>
+        </view>
       </view>
-      <!--      <view class="dingTag">-->
-      <!--        添加的dingtag-->
-      <!--      </view>-->
       <view class="footer">
         {{ dateYear }} © 鸢离
       </view>
@@ -145,7 +168,14 @@
 </template>
 
 <script>
-import {get_background_mage, get_user_info, save_current_image, update_info} from "../../service/service";
+import {
+  get_background_mage,
+  get_basic_settings,
+  get_user_info,
+  save_current_image,
+  update_basic_settings,
+  update_info
+} from "../../service/service";
 import Tools from '../../compontent/tools'
 import Comments from '../../compontent/comments'
 import Userinfo from '../../compontent/userInfo'
@@ -184,7 +214,7 @@ export default {
       //  时间
       dateTime: '',
       dateSeconds: "",
-      showSeconds: false,
+
       dateYear: "",
       timer: "",
       //作品和评论及DING
@@ -195,15 +225,23 @@ export default {
       startX: 0,
       haveToken: store.get('token'),
       dialogVisible: false,
-      userInfo: [],
+      info: '',
+      basic_settings: '',
       userName: '',
       email: '',
       uid: '',
       createTime: '',
 
-      isChangeName:false,
-      changeNameValue:"",
-      selfImage:false,  //false
+      isChangeName: false,
+      changeNameValue: "",
+      selfImage: false,  //false
+
+
+      //  基础设置
+      showSeconds: false,
+      showWeather: false,
+      showConciseFooter: false,
+      showToGreet: false,
     }
   },
   onLoad() {
@@ -217,22 +255,20 @@ export default {
           (res) => {
             if (res) {
               this.userName = res.user_name
-              this.email = res.email
-              this.uid = res.uid
-              this.createTime = res.create_time.split("T")[0]
-              if(res.background_image !== "null"){
+              this.info = res.info[0]
+              if (res.background_image !== "null") {
                 this.selfImage = true
                 this.backgroundImage = res.background_image
-              }
-              else{
+              } else {
                 this.getBackgroundImage()
               }
             }
           }
       )
+      this.getBasicSettings()
     }
     //没有登录也是随机刷新
-    else{
+    else {
       this.getBackgroundImage()
     }
   },
@@ -245,7 +281,7 @@ export default {
       let hours = date.getHours()
       let minutes = date.getMinutes()
       if (minutes < 10) {
-        minutes = "0"+minutes;
+        minutes = "0" + minutes;
       }
       this.dateTime = `${hours}:${minutes}`
       this.dateSeconds = `:${date.getSeconds()}`
@@ -254,7 +290,7 @@ export default {
     getBackgroundImage() {
       get_background_mage().then(
           (res) => {
-            if(this.selfImage) {
+            if (this.selfImage) {
               this.delCurrentImage()
             }
             this.backgroundImage = res
@@ -303,14 +339,14 @@ export default {
       store.remove('token')
       location.reload()
     },
-    showUpdate(){
+    showUpdate() {
       this.isChangeName = true
       this.changeNameValue = this.userName
     },
-    updateUserName(){
-      update_info({user_name:this.changeNameValue}).then(
-          (res)=>{
-            if(res){
+    updateUserName() {
+      update_info({user_name: this.changeNameValue}).then(
+          (res) => {
+            if (res) {
               this.userName = res
               this.isChangeName = false
             }
@@ -318,26 +354,52 @@ export default {
       )
     },
     //将当前壁纸设为永久
-    saveCurrentImage(){
-      save_current_image({background_image:this.backgroundImage}).then(
-          (res)=>{
-            if(res){
+    saveCurrentImage() {
+      save_current_image({background_image: this.backgroundImage}).then(
+          (res) => {
+            if (res) {
               this.selfImage = true
             }
           }
       )
     },
-
     //取消当前的永久壁纸
-    delCurrentImage(){
-      save_current_image({background_image:''}).then(
-          (res)=>{
-            if(res){
+    delCurrentImage() {
+      save_current_image({background_image: ''}).then(
+          (res) => {
+            if (res) {
               this.selfImage = false
               this.getBackgroundImage()
             }
           }
       )
+    },
+
+    //  基础设置
+    getBasicSettings() {
+      get_basic_settings().then(
+          (res) => {
+            this.basic_settings = res.basic_settings
+            this.showSeconds = res.show_seconds
+            this.showWeather = res.show_weather
+            this.showConciseFooter = res.show_concise_footer
+            this.showToGreet = res.show_to_greet
+          }
+      )
+    },
+    updateSetting(item, index) {
+      let {type} = item
+      let data = item.data == 0 ? 1 : 0
+      if (type == 'show_seconds') {
+        this.showSeconds = data ? true : false
+      }
+      let obj = {
+        name: item.name,
+        type: item.type,
+        data,
+      }
+      this.$set(this.basic_settings, index, obj);
+      update_basic_settings({type, data})
     }
   },
   onHide() {
@@ -548,7 +610,6 @@ export default {
   color: black;
   font-size: 12px;
   transition: .25s;
-  width: 100px;
   cursor: pointer;
 }
 
@@ -578,9 +639,17 @@ export default {
 /deep/ .el-dialog__header {
   padding: 40px 30px 10px;
 }
-/deep/ .el-dialog__body{
+
+/deep/ .el-dialog__body {
   padding: 20px;
+  max-height: 350px;
+  overflow: auto;
 }
+
+/deep/ .el-dialog__body::-webkit-scrollbar {
+  display: none
+}
+
 /deep/ .el-dialog__headerbtn {
   position: absolute;
   top: 20px;
@@ -597,7 +666,14 @@ export default {
   margin-bottom: 10px;
   border-radius: 10px;
   background-color: white;
-  padding: 12px 30px;
+  padding: 14px;
+}
+
+.dialog-title {
+  color: black;
+  font-family: "Helvetica Neue", Helvetica, Tahoma, Arial, "PingFang SC", "Microsoft Yahei", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .info-item {
@@ -605,6 +681,21 @@ export default {
   padding: 10px 0;
   color: rgba(0, 0, 0, .35);
   font-size: 13px;
+}
+
+.basic {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.basic_icon {
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.basic_true {
+  color: #70C000;
 }
 
 .info-text {
@@ -628,20 +719,23 @@ export default {
 .info-icon:hover {
   color: #70C000;
 }
-.info-edit{
+
+.info-edit {
   color: #70C000;
 }
-.header-title{
+
+.header-title {
   color: black;
   font-size: 26px;
-  font-family: "Helvetica Neue",Helvetica,Tahoma,Arial,"PingFang SC","Microsoft Yahei",sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Tahoma, Arial, "PingFang SC", "Microsoft Yahei", sans-serif;
   transition: .25s;
 }
 
 /deep/ .el-input__inner:focus {
   border-bottom: solid 1px #70C000;
 }
-/deep/ .el-input__inner{
+
+/deep/ .el-input__inner {
   -webkit-appearance: none;
   box-sizing: border-box;
   display: inline-block;
@@ -649,23 +743,104 @@ export default {
   height: 20px;
   line-height: 20px;
   outline: 0;
-  /* padding: 0 15px; */
+  padding: 0px;
   width: 200px;
   border: none;
   border-radius: 0;
-  border-bottom: solid 1px rgba(0,0,0,.1);
+  border-bottom: solid 1px rgba(0, 0, 0, .1);
   color: black;
   background-color: white;
   transition: .25s;
 }
-.icon-btn{
+
+.icon-btn {
   display: inline-block;
   font-size: 26px;
-  color: rgba(255,255,255,.35);
+  color: rgba(255, 255, 255, .35);
   cursor: pointer;
   transition: .25s;
 }
-.icon-btn:hover{
-  color: rgba(255,255,255,.75)
+
+.icon-btn:hover {
+  color: rgba(255, 255, 255, .75)
+}
+
+
+.tabs{
+  width: 150px;
+  position: absolute;
+  left: 20px;
+  top: 30px;
+}
+.box {
+  min-width: 300px;
+  max-height: 150px;
+  overflow-y: auto;
+  border-radius: 6px;
+  background: rgba(255,255,255,.1);
+  backdrop-filter: blur(10px);
+  margin-bottom: 30px;
+  padding: 10px 10px 10px 30px;
+  box-shadow: 1px 2px 1px -1px #777;
+  transition: background 300ms ease-in-out;
+  text-align:left;
+  box-sizing: border-box;
+  /*transform: translateX(-45px);*/
+  cursor: pointer;
+  color: #fff;
+}
+.box ::-webkit-scrollbar {
+  display: none
+}
+/*.box:hover{*/
+/*  animation: transx 500ms;*/
+/*  transform:translateX(0)*/
+/*}*/
+/*@keyframes transx {*/
+/*  from{*/
+/*    transform:translateX(-45px)*/
+/*  }*/
+/*  to{*/
+/*    transform:translateX(0);*/
+/*  }*/
+/*}*/
+.box a{
+  color:rgba(255,255,255,.8);
+  text-decoration:none;
+  font-size: 15px;
+}
+
+.shadow:before {
+  z-index: -1;
+  position: absolute;
+  content: "";
+  top: 0;
+  right: 0;
+  width: 75%;
+  -webkit-transform: rotate(4deg);
+  transform: rotate(4deg);
+  transition: all 150ms ease-in-out;
+}
+
+.box:hover {
+  background: rgba(255,255,255,.5);
+}
+
+/*.shadow:hover::before {*/
+/*  -webkit-transform: rotate(0deg);*/
+/*  transform: rotate(0deg);*/
+/*  bottom: 20px;*/
+/*  z-index: -10;*/
+/*}*/
+
+.circle {
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  box-shadow: inset 1px 1px 1px 0 rgba(0, 0, 0, 0.5), inset 0 0 0 25px rgba(255, 255, 255, .25);
+  width: 20px;
+  height: 20px;
 }
 </style>
