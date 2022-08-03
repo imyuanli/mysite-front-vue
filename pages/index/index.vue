@@ -5,7 +5,7 @@
       <view>
         <view class="time">
           <span>{{ dateTime }}</span>
-          <span v-show="showSeconds">{{ dateSeconds }}</span>
+          <span v-show="showSeconds == 1">{{ dateSeconds }}</span>
         </view>
         <view :class="[showLongInput?'inputBox longInput ':'inputBox shortInput']">
           <view class="searchBar">
@@ -127,13 +127,13 @@
         </view>
         <view class="dialog-info">
           <view class="dialog-title">基础信息</view>
-          <view v-for="i in info" :key="i.name" class="info-item">
+          <view v-for="(i,index) in info" :key="i.name" class="info-item">
             <view v-if="i.should_edit == 'true'">
               <span>{{ i.name }}</span>
               <span v-if="!isChangeName" class="info-text">{{ i.data }}</span>
               <el-input class="info-text update" v-if="isChangeName" v-model="changeNameValue" type="text"/>
               <i v-if="!isChangeName" @click="showUpdate" class="info-icon el-icon-edit"></i>
-              <span @click="updateUserName" v-if="isChangeName" class="info-edit info-icon">保存</span>
+              <span @click="updateUserName(i,index)" v-if="isChangeName" class="info-edit info-icon">保存</span>
             </view>
             <view v-else>
               <span>{{ i.name }}</span>
@@ -152,14 +152,14 @@
           </view>
         </view>
       </el-dialog>
-      <view class="dingTag">
-        <view class="tabs">
-          <view class="box shadow">
-            <view>鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客</view>
-            <view class="circle"></view>
-          </view>
-        </view>
-      </view>
+<!--      <view class="dingTag">-->
+<!--        <view class="tabs">-->
+<!--          <view class="box shadow">-->
+<!--            <view>鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客</view>-->
+<!--            <view class="circle"></view>-->
+<!--          </view>-->
+<!--        </view>-->
+<!--      </view>-->
       <view class="footer">
         {{ dateYear }} © 鸢离
       </view>
@@ -280,11 +280,15 @@ export default {
       let date = new Date()
       let hours = date.getHours()
       let minutes = date.getMinutes()
+      let seconds = date.getSeconds()
       if (minutes < 10) {
         minutes = "0" + minutes;
       }
+      if (seconds < 10) {
+        seconds = "0" + seconds;
+      }
       this.dateTime = `${hours}:${minutes}`
-      this.dateSeconds = `:${date.getSeconds()}`
+      this.dateSeconds = `:${seconds}`
       this.dateYear = date.getFullYear()
     },
     getBackgroundImage() {
@@ -343,7 +347,13 @@ export default {
       this.isChangeName = true
       this.changeNameValue = this.userName
     },
-    updateUserName() {
+    updateUserName(i,index) {
+      let obj ={
+        data: this.changeNameValue,
+        name: "姓名",
+        should_edit: "true",
+      }
+      this.$set(this.info, index, obj);
       update_info({user_name: this.changeNameValue}).then(
           (res) => {
             if (res) {
@@ -391,7 +401,7 @@ export default {
       let {type} = item
       let data = item.data == 0 ? 1 : 0
       if (type == 'show_seconds') {
-        this.showSeconds = data ? true : false
+        this.showSeconds = data
       }
       let obj = {
         name: item.name,
