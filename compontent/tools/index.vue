@@ -1,20 +1,25 @@
 <template>
   <view class="toolBox">
-    <view :class="[toolsArr.length ==0?'carouselBox':'carouselBox noCenter']">
-      <view v-for="(items,index) in toolsArr"
+    <view :class="[shortcuts_list.length ==0?'carouselBox':'carouselBox noCenter']">
+      <view v-for="(items,index) in shortcuts_list"
             draggable="true"
             @dragenter="handleDragEnter($event, items,index)"
             @dragend="handleDragEnd($event, items,index)"
             class="item"
             :class="{active:enterIndex===index}"
       >
-        <view class="itemBox">
-          {{ items.icon }}
+        <view class="itemBox" @click="redirectToUrl(items.url)">
+          <view v-if="items.iconObj.isText">
+            {{ items.iconObj.data }}
+          </view>
+          <view v-if="!items.iconObj.isText">
+            <img class="edit-icon" :src="items.iconObj.data" alt="">
+          </view>
         </view>
-        <span>{{ items.name }}</span>
+        <span class="item-title">{{ items.title }}</span>
       </view>
       <view class="item">
-        <view class="itemBox">
+        <view @click="handleOpen" class="itemBox">
           <svg t="1659162445218" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
                p-id="21360" width="48" height="48">
             <path
@@ -25,18 +30,68 @@
         添加快捷访问
       </view>
     </view>
+    <el-dialog
+        title="编辑网站捷径"
+        :visible.sync="dialogVisible"
+        width="90%"
+        style="margin-top: 0"
+        :modal="false"
+        :close-on-click-modal=false
+        :before-close="handleClose"
+
+    >
+      <view class="dialog-content" v-loading="loading">
+        <view class="edit-box">
+          <span class="edit-title">网址</span>
+          <input class="edit-input" v-model="url" placeholder="输入或粘贴网址Url"/>
+        </view>
+        <view class="edit-box">
+          <span class="edit-title">名称</span>
+          <input class="edit-input" v-model="title" placeholder="输入标题，不填写将自动获取"/>
+        </view>
+        <view class="edit-box">
+          <span class="edit-title">图标</span>
+          <view class="edit-icon-box">
+            <span v-if="isText">{{title.substring(0, 5)}}</span>
+            <img v-if="!isText" class="edit-icon" :src="icon" alt="">
+          </view>
+          <view class="edit-btn-box">
+            <view class="edit-btn" @click="getUrlIcon">
+              智能
+            </view>
+            <view class="edit-btn" @click="changeText">
+              文字
+            </view>
+            <view class="edit-btn" @click="changeDefault">
+              默认
+            </view>
+          </view>
+        </view>
+      </view>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="addShortcuts">确 定</el-button>
+  </span>
+    </el-dialog>
   </view>
 </template>
 
 <script>
+import {get_url_icon, get_url_title, update_shortcuts} from "../../service/service";
+
 export default {
   name: "Tools",
+  props: {
+    shortcuts_list: {
+      type: Array,
+    }
+  },
   data() {
     return {
       toolsArr: [
         {
-          name: '翻译1',
-          icon: 'icon',
+          name: '翻译翻译',
+          icon: '翻译翻译翻译翻译',
           url: 'https://fanyi.baidu.com/'
         },
         {
@@ -140,24 +195,136 @@ export default {
           url: 'https://fanyi.baidu.com/'
         },
       ],
-      enterIndex:"",
-      // startDrag:false
+      enterIndex: "",
+      // startDrag:false,
+      dialogVisible: false,
+      url: '',
+      title: '',
+      defaultIcon: 'https://www.jianfast.com/static/home/images/defaultsicon/null.png',
+      iconObj: {
+        data: "",
+        isText: false
+      },
+      icon: 'https://www.jianfast.com/static/home/images/defaultsicon/null.png',
+      isText: false,
+      loading:false
     }
   },
   methods: {
     // handleDragStart(){
     //   this.startDrag = true
     // },
-    handleDragEnd(e, item,index) {
+    handleDragEnd(e, item, index) {
       let enterIndex = this.enterIndex
       let tempOption = this.toolsArr[index];
       this.$set(this.toolsArr, index, this.toolsArr[enterIndex]);
       this.$set(this.toolsArr, enterIndex, tempOption)
-      this.enterIndex=null
+      this.enterIndex = null
     },
-    handleDragEnter(e, item,index) {
+    handleDragEnter(e, item, index) {
       this.enterIndex = index
     },
+    handleClose() {
+      this.dialogVisible = false
+    },
+    handleOpen() {
+      this.isText = false
+      this.dialogVisible = true
+      this.changeIconObj(this.defaultIcon, false)
+    },
+    getUrlIcon() {
+      if(!this.url){
+        this.$message({
+          showClose: true,
+          message: '网址不能为空',
+          type: 'warning'
+        });
+        return;
+      }
+      this.loading = true
+      //  智能获取icon
+      this.isText = false
+      get_url_icon({domain: this.url}).then(
+          (res) => {
+            if(res){
+              this.icon = res
+              this.loading = false
+            }
+          }
+      )
+    },
+    changeText() {
+      if(!this.url){
+        this.$message({
+          showClose: true,
+          message: '网址不能为空',
+          type: 'warning'
+        });
+        return;
+      }
+      this.isText = true
+      get_url_title({domain: this.url}).then(
+          (res)=>{
+            this.title = res
+          }
+      )
+    },
+    changeDefault() {
+      this.isText = false
+      this.icon = this.defaultIcon
+    },
+    //整合数据
+    changeIconObj(data, isText) {
+      this.iconObj = {...this.iconObj, ...{data, isText}}
+    },
+    async addShortcuts() {
+      if(!this.url){
+        this.$message({
+          showClose: true,
+          message: '网址不能为空',
+          type: 'warning'
+        });
+        return;
+      }
+      let obj = {}
+      obj.url = this.url
+      //如果title是空的那就调用这个接口
+      if(!this.title){
+         await get_url_title({domain: this.url}).then(
+            (res)=>{
+              if(res){
+                this.title = res
+              }
+            }
+        )
+      }
+      obj.title = this.title
+      let text = this.title.substring(0, 5);
+      if (this.isText) {
+        this.changeIconObj(text, true)
+      } else {
+        this.changeIconObj(this.icon, false)
+      }
+      obj.iconObj = this.iconObj
+      this.shortcuts_list.push(obj)
+      this.updateShortcuts()
+      this.dialogVisible = false
+    },
+    updateShortcuts(){
+      update_shortcuts({shortcuts_list:JSON.stringify(this.shortcuts_list)}).then(
+          (res)=>{
+            if(res){
+              this.url = ""
+              this.title = ""
+              this.iconObj = ""
+              this.icon= this.defaultIcon
+            }
+          }
+      )
+    },
+    redirectToUrl(url){
+      window.open(url)
+    }
   }
 }
 </script>
@@ -190,6 +357,7 @@ export default {
   display: grid;
   justify-content: center;
   height: 100%;
+  align-items: start;
 }
 
 .noCenter {
@@ -216,11 +384,28 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  white-space: normal;
+  word-break: break-all;
+  overflow: hidden;
 }
 
 .itemBox {
   -webkit-backdrop-filter: blur(30px) !important;
   backdrop-filter: blur(30px) !important;
+}
+
+.item-title {
+
+  color: #fff;
+  font-size: 12px;
+
+  overflow: hidden;
+
+  text-align: center;
+  text-overflow: ellipsis;
+  transition: .25s;
+  white-space: nowrap;
+  width: 90%;
 }
 
 .itemBox:hover {
@@ -239,9 +424,9 @@ export default {
     width: 50px;
   }
 
-  .carouselBox {
-    grid-template-columns: repeat(auto-fill, 90px);
-  }
+  /*.carouselBox {*/
+  /*  grid-template-columns: repeat(auto-fill, 90px);*/
+  /*}*/
 }
 
 @media screen and (max-width: 350px) {
@@ -273,10 +458,94 @@ export default {
   width: 90%;
   margin: 5px;
 }
-.active{
+
+.active {
   transform: scale(1.1);
 }
-.startActive{
+
+.startActive {
   border: 1px solid red;
+}
+
+/deep/ .el-dialog {
+  margin: 0 auto !important;
+  background-color: #fff !important;
+}
+
+.dialog-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex-direction: column;
+}
+
+.edit-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.edit-title {
+  color: #4d4d4d;
+  margin-right: 10px;
+}
+
+.edit-input {
+  padding: 0 15px;
+  border: none;
+  outline: 0;
+  border-radius: 5px;
+  color: black;
+  background-color: rgba(0, 0, 0, .05);
+  transition: .25s;
+  width: 70%;
+  height: 40px;
+  font-size: 14px;
+}
+
+.edit-icon-box {
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  border: 1px solid #cccccc;
+  margin-left: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.edit-icon {
+  width: 35px;
+  height: 35px;
+}
+
+.edit-btn-box {
+  width: 65%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.edit-btn {
+  font-size: 14px;
+  color: #4d4d4d;
+  width: 20%;
+  height: 30px;
+  border-radius: 50px;
+  text-align: center;
+  border: 1px solid #f2f2f2;
+  line-height: 30px;
+  margin: 5px 8px;
+  cursor: pointer;
+  padding: 3px;
+  background-color: #f2f2f2;
+}
+
+.edit-btn:hover {
+  border: 1px solid #b3b3b3;
 }
 </style>

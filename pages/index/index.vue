@@ -19,7 +19,7 @@
         <view v-show="!showLongInput">
           <view @touchstart="touchStart" @touchend="touchEnd">
             <view v-show="showWorks">
-              <Tools/>
+              <Tools :shortcuts_list="shortcuts_list"/>
             </view>
             <view v-show="!showWorks">
               <Comments/>
@@ -192,24 +192,26 @@ export default {
     return {
       inputVlaue: '',
       showLongInput: false,
-      options: [
-        {
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶',
-          disabled: true
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
+      //快捷方式
+      shortcuts_list:[],
+      // shortcuts_list: [
+      //   {
+      //     value: '选项1',
+      //     label: '黄金糕'
+      //   }, {
+      //     value: '选项2',
+      //     label: '双皮奶',
+      //     disabled: true
+      //   }, {
+      //     value: '选项3',
+      //     label: '蚵仔煎'
+      //   }, {
+      //     value: '选项4',
+      //     label: '龙须面'
+      //   }, {
+      //     value: '选项5',
+      //     label: '北京烤鸭'
+      //   }],
       value: '',
       //  时间
       dateTime: '',
@@ -256,6 +258,7 @@ export default {
             if (res) {
               this.userName = res.user_name
               this.info = res.info[0]
+              this.shortcuts_list = JSON.parse(res.shortcuts_list)
               if (res.background_image !== "null") {
                 this.selfImage = true
                 this.backgroundImage = res.background_image

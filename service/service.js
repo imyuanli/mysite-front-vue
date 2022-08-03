@@ -33,3 +33,12 @@ export async function get_basic_settings(payload) {
 export async function update_basic_settings(payload) {
     return request.post(BASE_URL + '/update_basic_settings/', payload)
 }
+export async function get_url_icon(payload) {
+    return request.post(BASE_URL + '/get_url_icon/', payload)
+}
+export async function get_url_title(payload) {
+    return request.post(BASE_URL + '/get_url_title/', payload)
+}
+export async function update_shortcuts(payload) {
+    return request.post(BASE_URL + '/update_shortcuts/', payload)
+}
