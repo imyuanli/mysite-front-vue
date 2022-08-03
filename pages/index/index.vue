@@ -152,14 +152,14 @@
           </view>
         </view>
       </el-dialog>
-<!--      <view class="dingTag">-->
-<!--        <view class="tabs">-->
-<!--          <view class="box shadow">-->
-<!--            <view>鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客</view>-->
-<!--            <view class="circle"></view>-->
-<!--          </view>-->
-<!--        </view>-->
-<!--      </view>-->
+      <!--      <view class="dingTag">-->
+      <!--        <view class="tabs">-->
+      <!--          <view class="box shadow">-->
+      <!--            <view>鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客</view>-->
+      <!--            <view class="circle"></view>-->
+      <!--          </view>-->
+      <!--        </view>-->
+      <!--      </view>-->
       <view class="footer">
         {{ dateYear }} © 鸢离
       </view>
@@ -347,8 +347,8 @@ export default {
       this.isChangeName = true
       this.changeNameValue = this.userName
     },
-    updateUserName(i,index) {
-      let obj ={
+    updateUserName(i, index) {
+      let obj = {
         data: this.changeNameValue,
         name: "姓名",
         should_edit: "true",
@@ -776,32 +776,35 @@ export default {
 }
 
 
-.tabs{
+.tabs {
   width: 150px;
   position: absolute;
   left: 20px;
   top: 30px;
 }
+
 .box {
   min-width: 300px;
   max-height: 150px;
   overflow-y: auto;
   border-radius: 6px;
-  background: rgba(255,255,255,.1);
+  background: rgba(255, 255, 255, .1);
   backdrop-filter: blur(10px);
   margin-bottom: 30px;
   padding: 10px 10px 10px 30px;
   box-shadow: 1px 2px 1px -1px #777;
   transition: background 300ms ease-in-out;
-  text-align:left;
+  text-align: left;
   box-sizing: border-box;
   /*transform: translateX(-45px);*/
   cursor: pointer;
   color: #fff;
 }
+
 .box ::-webkit-scrollbar {
   display: none
 }
+
 /*.box:hover{*/
 /*  animation: transx 500ms;*/
 /*  transform:translateX(0)*/
@@ -814,9 +817,9 @@ export default {
 /*    transform:translateX(0);*/
 /*  }*/
 /*}*/
-.box a{
-  color:rgba(255,255,255,.8);
-  text-decoration:none;
+.box a {
+  color: rgba(255, 255, 255, .8);
+  text-decoration: none;
   font-size: 15px;
 }
 
@@ -833,7 +836,7 @@ export default {
 }
 
 .box:hover {
-  background: rgba(255,255,255,.5);
+  background: rgba(255, 255, 255, .5);
 }
 
 /*.shadow:hover::before {*/
