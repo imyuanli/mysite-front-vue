@@ -1,4 +1,5 @@
 <template>
+<view>
   <view class="toolBox">
     <view :class="[shortcuts_list.length ==0?'carouselBox':'carouselBox noCenter']">
       <view v-for="(items,index) in shortcuts_list"
@@ -8,7 +9,7 @@
             class="item"
             :class="{active:enterIndex===index}"
       >
-        <view class="itemBox" @click="redirectToUrl(items.url)">
+        <view @contextmenu.prevent="rightClick($event,items,index)" class="itemBox" @click="redirectToUrl(items.url)">
           <view v-if="items.iconObj.isText">
             {{ items.iconObj.data }}
           </view>
@@ -38,7 +39,6 @@
         :modal="false"
         :close-on-click-modal=false
         :before-close="handleClose"
-
     >
       <view class="dialog-content" v-loading="loading">
         <view class="edit-box">
@@ -70,10 +70,23 @@
       </view>
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="addShortcuts">确 定</el-button>
+    <el-button v-if="!isUpdate" type="primary" @click="addShortcuts">确 定</el-button>
+    <el-button  v-if="isUpdate" type="primary" @click="addShortcuts(isUpdate)">更 新</el-button>
   </span>
     </el-dialog>
+
   </view>
+  <view v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
+    <view class="menu" @click="toolItemEdit">
+      <i class="menu-icon el-icon-edit"></i>
+      <span>编辑</span>
+    </view>
+    <view class="menu" @click="toolItemDel">
+      <i class="menu-icon el-icon-delete"></i>
+      <span>删除</span>
+    </view>
+  </view>
+</view>
 </template>
 
 <script>
@@ -207,7 +220,13 @@ export default {
       },
       icon: 'https://www.jianfast.com/static/home/images/defaultsicon/null.png',
       isText: false,
-      loading:false
+      loading:false,
+      visible: false,
+      top: 0,
+      left: 0,
+      rightClickItem:'',
+      rightClickIndex:'',
+      isUpdate:false
     }
   },
   methods: {
@@ -277,7 +296,7 @@ export default {
     changeIconObj(data, isText) {
       this.iconObj = {...this.iconObj, ...{data, isText}}
     },
-    async addShortcuts() {
+    async addShortcuts(isUpdate) {
       if(!this.url){
         this.$message({
           showClose: true,
@@ -306,7 +325,11 @@ export default {
         this.changeIconObj(this.icon, false)
       }
       obj.iconObj = this.iconObj
-      this.shortcuts_list.push(obj)
+      if(isUpdate){
+        this.$set(this.shortcuts_list,this.rightClickIndex,obj)
+      }else{
+        this.shortcuts_list.push(obj)
+      }
       this.updateShortcuts()
       this.dialogVisible = false
     },
@@ -324,8 +347,44 @@ export default {
     },
     redirectToUrl(url){
       window.open(url)
+    },
+    rightClick(e,item,index) {
+      this.rightClickItem = item;
+      this.rightClickIndex = index;
+      var x = e.pageX;
+      var y = e.pageY;
+      this.top = y;
+      this.left = x;
+      this.visible = true;
+    },
+    closeMenu() {
+      this.visible = false;
+    },
+    toolItemEdit(){
+      console.log(this.rightClickItem)
+      const {url,title,iconObj} = this.rightClickItem
+      this.dialogVisible = true
+      this.url = url
+      this.title = title
+      this.icon = iconObj.data
+      this.isText = iconObj.isText
+      this.isUpdate = true
+    },
+    toolItemDel(){
+      this.shortcuts_list.splice(this.rightClickIndex,1)
+      this.updateShortcuts()
+    }
+  },
+  watch: {
+    visible(value) {
+      if (value) {
+        document.body.addEventListener('click', this.closeMenu)
+      } else {
+        document.body.removeEventListener('click', this.closeMenu)
+      }
     }
   }
+
 }
 </script>
 
@@ -547,5 +606,38 @@ export default {
 
 .edit-btn:hover {
   border: 1px solid #b3b3b3;
+}
+
+.contextmenu {
+  margin: 0;
+  background: #fff;
+  z-index: 3000;
+  position: absolute;
+  list-style-type: none;
+  padding: 5px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #333;
+  min-width: 160px;
+  border-radius: 10px;
+  box-shadow: 0 15px 30px rgb(0 0 0 / 25%);
+  transition: .25s cubic-bezier(0.65, 0.05, 0.1, 1);
+  overflow: hidden;
+
+}
+.menu{
+  padding: 10px 15px;
+  border-radius: 5px;
+  color: black;
+  font-size: 12px;
+  transition: .25s;
+  cursor: pointer;
+}
+.menu:hover{
+  background-color: rgba(0,0,0,.1);
+}
+.menu-icon {
+  margin-right: 15px;
+  font-size: 14px;
 }
 </style>
