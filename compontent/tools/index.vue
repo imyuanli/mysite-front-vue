@@ -382,9 +382,9 @@ export default {
       } else {
         document.body.removeEventListener('click', this.closeMenu)
       }
-    }
-  }
+    },
 
+  }
 }
 </script>
 

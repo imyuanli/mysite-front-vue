@@ -1,19 +1,39 @@
 <template>
   <view class="content" :style="{'backgroundImage':`url(${backgroundImage})`}">
     <!--  <view class="content">-->
-    <view :class="[showLongInput?'contentBox showBlur':'contentBox']">
+    <view @click.self="handleClickClose()" :class="[showLongInput?'contentBox showBlur':'contentBox']">
       <view>
         <view class="time">
           <span>{{ dateTime }}</span>
           <span v-show="showSeconds == 1">{{ dateSeconds }}</span>
         </view>
-        <view :class="[showLongInput?'inputBox longInput ':'inputBox shortInput']">
-          <view class="searchBar">
-            <input @focus="handleClick"
-                   @blur="handleClick"
-                   class="input"
-                   v-model="inputVlaue"
-                   :placeholder="showLongInput?'':'搜索'"/>
+        <view @click="handleClickOpen" :class="[showLongInput?'searchBar longInput ':'searchBar shortInput']">
+          <input
+              @keydown.enter="searchData"
+              class="input"
+              v-model="inputVlaue"
+              :placeholder="showLongInput?'':'搜索'"/>
+          <el-popover
+              placement="bottom"
+              width="100"
+              trigger="click"
+              v-model="popoverVisible">
+            <view class="search-menu">
+              <view @click="selectEngines(item,index)" class="menu-item" v-for="(item,index) in searchEngines">
+                <img class="menu-img" :src="item.icon" alt="">
+                <span>{{ item.name }}</span>
+              </view>
+<!--              <view class="menu-item" @click="addSearchEngines">-->
+<!--                <i class="menu-icon el-icon-plus"></i>-->
+<!--                <span>添加搜索引擎</span>-->
+<!--              </view>-->
+            </view>
+            <view @click="!popoverVisible" slot="reference" v-show="showLongInput" class="search-item search-type">
+              <img class="search-item-img" :src="searchEngines[default_search].icon" alt="">
+            </view>
+          </el-popover>
+          <view @click="searchData" v-show="showLongInput" class="search-item search-icon-box">
+            <i class="search-icon el-icon-search"></i>
           </view>
         </view>
         <view v-show="!showLongInput">
@@ -174,7 +194,7 @@ import {
   get_user_info,
   save_current_image,
   update_basic_settings,
-  update_info
+  update_info, update_search_engines
 } from "../../service/service";
 import Tools from '../../compontent/tools'
 import Comments from '../../compontent/comments'
@@ -193,30 +213,11 @@ export default {
       inputVlaue: '',
       showLongInput: false,
       //快捷方式
-      shortcuts_list:[],
-      // shortcuts_list: [
-      //   {
-      //     value: '选项1',
-      //     label: '黄金糕'
-      //   }, {
-      //     value: '选项2',
-      //     label: '双皮奶',
-      //     disabled: true
-      //   }, {
-      //     value: '选项3',
-      //     label: '蚵仔煎'
-      //   }, {
-      //     value: '选项4',
-      //     label: '龙须面'
-      //   }, {
-      //     value: '选项5',
-      //     label: '北京烤鸭'
-      //   }],
+      shortcuts_list: [],
       value: '',
       //  时间
       dateTime: '',
       dateSeconds: "",
-
       dateYear: "",
       timer: "",
       //作品和评论及DING
@@ -233,17 +234,45 @@ export default {
       email: '',
       uid: '',
       createTime: '',
-
       isChangeName: false,
       changeNameValue: "",
       selfImage: false,  //false
-
-
       //  基础设置
       showSeconds: false,
       showWeather: false,
       showConciseFooter: false,
       showToGreet: false,
+      //  搜索引擎
+      searchEngines: [
+        {
+          name: "百度",
+          target: "https://www.baidu.com/s?wd=",
+          icon: 'https://www.baidu.com/favicon.ico'
+        },
+        {
+          name: "必应",
+          target: "https://cn.bing.com/search?q=",
+          icon: 'https://www.jianfast.com/static/home/images/searchChoice/bing.svg'
+        },
+        {
+          name: "谷歌",
+          target: "https://www.google.com/search?q=",
+          icon: 'https://www.jianfast.com/static/home/images/searchChoice/google.svg'
+        },
+        {
+          name: "360",
+          target: "https://www.so.com/s?q=",
+          icon: 'https://s2.ssl.qhimg.com/static/121a1737750aa53d.ico'
+        },
+        {
+          name: "搜狗",
+          target: "https://www.sogou.com/web?query=",
+          icon: 'https://www.sogou.com/images/logo/new/favicon.ico'
+        },
+      ],
+      selectTarget: "https://www.baidu.com/s?wd=",
+      default_search: 0,
+      popoverVisible:false
     }
   },
   onLoad() {
@@ -259,6 +288,7 @@ export default {
               this.userName = res.user_name
               this.info = res.info[0]
               this.shortcuts_list = JSON.parse(res.shortcuts_list)
+              this.default_search = Number(res.default_search)
               if (res.background_image !== "null") {
                 this.selfImage = true
                 this.backgroundImage = res.background_image
@@ -276,8 +306,11 @@ export default {
     }
   },
   methods: {
-    handleClick() {
-      this.showLongInput = !this.showLongInput
+    handleClickOpen() {
+      this.showLongInput = true
+    },
+    handleClickClose() {
+      this.showLongInput = false
     },
     getNowTime() {
       let date = new Date()
@@ -413,8 +446,37 @@ export default {
       }
       this.$set(this.basic_settings, index, obj);
       update_basic_settings({type, data})
+    },
+    selectEngines(item, index) {
+      this.selectTarget = item.target
+      this.default_search = index
+      this.popoverVisible = false
+      update_search_engines({default_search:this.default_search}).then(
+          (res)=>{
+            console.log(res)
+          }
+      )
+    },
+    searchData() {
+      window.location.href = this.selectTarget + this.inputVlaue
+    },
+    // 添加搜素引擎
+    addSearchEngines(){
+
+    },
+    updateSearchEngines(){
+
     }
   },
+  // watch: {
+  //   showLongInput(value) {
+  //     if (value) {
+  //       document.body.addEventListener('click', this.handleClickClose)
+  //     } else {
+  //       document.body.removeEventListener('click', this.handleClickClose)
+  //     }
+  //   },
+  // },
   onHide() {
     if (this.timer) {
       clearInterval(this.timer); // 在Vue实例销毁前，清除我们的定时器
@@ -465,7 +527,7 @@ export default {
   backdrop-filter: blur(10px);
 }
 
-.inputBox {
+.searchBar {
   position: absolute;
   top: 180px;
   left: 50%;
@@ -481,6 +543,9 @@ export default {
   backdrop-filter: blur(10px);
   overflow: hidden;
   transition: color .25s, background-color .25s, box-shadow .25s, left .25s, opacity .25s, top .25s, width .25s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .shortInput {
@@ -491,30 +556,31 @@ export default {
   -webkit-backdrop-filter: blur(10px);
 }
 
-.searchBar {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-}
-
 .input {
-  width: 100%;
+  outline: 0;
+  border: none;
+  width: 80%;
   height: 100%;
+  color: inherit;
+  background-color: transparent;
+  font-size: 14px;
+  font-family: "Microsoft Yahei Light", "Microsoft Yahei", "PingFang SC", "Helvetica Neue", Helvetica, Tahoma, Arial, sans-serif;
   text-align: center;
 }
 
 .shortInput:hover {
-  color: var(--txt-b-pure);
+  color: black;
   background-color: rgba(255, 255, 255, .6);
   box-shadow: rgb(0 0 0 / 30%) 0 0 10px;
   width: 530px;
 }
 
 .longInput {
-  color: var(--txt-b-pure);
+  color: black;
   background-color: rgba(255, 255, 255, .9);
   box-shadow: rgb(0 0 0 / 20%) 0 0 10px;
   width: 530px;
+
 }
 
 .selectBox {
@@ -858,5 +924,66 @@ export default {
   box-shadow: inset 1px 1px 1px 0 rgba(0, 0, 0, 0.5), inset 0 0 0 25px rgba(255, 255, 255, .25);
   width: 20px;
   height: 20px;
+}
+
+.search-item {
+  /*pointer-events: none;*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 2px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: .25s;
+  text-align: center;
+}
+.search-item-img{
+  width: 28px;
+  height: auto;
+}
+
+.search-type {
+  left: 10px;
+  color: rgba(0, 0, 0, .5);
+}
+
+.search-icon-box {
+  right: 10px;
+  color: #70C000;
+}
+
+.search-item:hover {
+  border-radius: 50px;
+  background-color: #fff;
+  filter: brightness(1.1);
+}
+
+.search-icon {
+  font-size: 20px;
+}
+
+.menu-item {
+  padding: 10px 15px;
+  border-radius: 5px;
+  color: black;
+  font-size: 12px;
+  transition: .25s;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background-color: rgba(0, 0, 0, .1);
+}
+.menu-icon{
+  margin-right: 15px;
+  font-size: 14px;
+}
+.menu-img{
+  width: 14px;
+  height: 14px;
+  margin-right: 15px;
 }
 </style>
