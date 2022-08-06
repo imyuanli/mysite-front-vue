@@ -19,17 +19,6 @@
         </view>
         <span class="item-title">{{ items.title }}</span>
       </view>
-      <view class="item">
-        <view @click="handleOpen" class="itemBox">
-          <svg t="1659162445218" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-               p-id="21360" width="48" height="48">
-            <path
-                d="M863.328262 481.340895l-317.344013 0.099772L545.984249 162.816826c0-17.664722-14.336138-32.00086-32.00086-32.00086s-31.99914 14.336138-31.99914 32.00086l0 318.400215-322.368714-0.17718c-0.032684 0-0.063647 0-0.096331 0-17.632039 0-31.935493 14.239806-32.00086 31.904529-0.096331 17.664722 14.208843 32.031824 31.871845 32.095471l322.59234 0.17718 0 319.167424c0 17.695686 14.336138 32.00086 31.99914 32.00086s32.00086-14.303454 32.00086-32.00086L545.982529 545.440667l317.087703-0.099772c0.063647 0 0.096331 0 0.127295 0 17.632039 0 31.935493-14.239806 32.00086-31.904529S880.960301 481.404542 863.328262 481.340895z"
-                p-id="21361" fill="#f7f6f6"></path>
-          </svg>
-        </view>
-        添加快捷访问
-      </view>
     </view>
     <el-dialog
         title="编辑网站捷径"
@@ -70,8 +59,8 @@
       </view>
       <span slot="footer" class="dialog-footer">
     <el-button @click="handleClose">取 消</el-button>
-    <el-button v-if="!isUpdate" type="primary" @click="addShortcuts(false)">确 定</el-button>
-    <el-button  v-if="isUpdate" type="primary" @click="addShortcuts(true)">更 新</el-button>
+    <el-button v-if="!isUpdate" type="primary" @click="addShortcuts(false)" :loading="btnLoading">确 定</el-button>
+    <el-button  v-if="isUpdate" type="primary" @click="addShortcuts(true)" :loading="btnLoading">更 新</el-button>
   </span>
     </el-dialog>
   </view>
@@ -114,6 +103,7 @@ export default {
       icon: 'https://www.jianfast.com/static/home/images/defaultsicon/null.png',
       isText: false,
       loading:false,
+      btnLoading:false,
       visible: false,
       top: 0,
       left: 0,
@@ -191,6 +181,7 @@ export default {
       this.iconObj = {...this.iconObj, ...{data, isText}}
     },
     async addShortcuts(isUpdate) {
+      this.btnLoading = true
       if(!this.url){
         this.$message({
           showClose: true,
@@ -236,6 +227,7 @@ export default {
               this.title = ""
               this.iconObj = ""
               this.icon= this.defaultIcon
+              this.btnLoading = false
             }
           }
       )
