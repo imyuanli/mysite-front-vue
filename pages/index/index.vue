@@ -151,7 +151,7 @@
             <view v-if="i.should_edit == 'true'">
               <span>{{ i.name }}</span>
               <span v-if="!isChangeName" class="info-text">{{ i.data }}</span>
-              <el-input class="info-text update" v-if="isChangeName" v-model="changeNameValue" type="text"/>
+              <el-input maxlength="30" class="info-text update" v-if="isChangeName" v-model="changeNameValue" type="text"/>
               <i v-if="!isChangeName" @click="showUpdate" class="info-icon el-icon-edit"></i>
               <span @click="updateUserName(i,index)" v-if="isChangeName" class="info-edit info-icon">保存</span>
             </view>
@@ -820,13 +820,13 @@ export default {
 
 .header-title {
   color: black;
-  font-size: 26px;
+  font-size: 24px;
   font-family: "Helvetica Neue", Helvetica, Tahoma, Arial, "PingFang SC", "Microsoft Yahei", sans-serif;
   transition: .25s;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 80%;
+  width: 98%;
 }
 
 /deep/ .el-input__inner:focus {
@@ -842,13 +842,16 @@ export default {
   line-height: 20px;
   outline: 0;
   padding: 0px;
-  width: 200px;
+  width: 95%;
   border: none;
   border-radius: 0;
   border-bottom: solid 1px rgba(0, 0, 0, .1);
   color: black;
   background-color: white;
   transition: .25s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .icon-btn {
