@@ -45,3 +45,6 @@ export async function update_shortcuts(payload) {
 export async function update_search_engines(payload) {
     return request.post(BASE_URL + '/update_search_engines/', payload)
 }
+export async function update_sticky_note(payload) {
+    return request.post(BASE_URL + '/update_sticky_note/', payload)
+}

@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "pages/login/index"
+		},
+		{
+			"path": "pages/test/index"
 		}
 	],
 	"globalStyle": {

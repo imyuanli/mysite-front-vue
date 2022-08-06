@@ -23,10 +23,10 @@
                 <img class="menu-img" :src="item.icon" alt="">
                 <span>{{ item.name }}</span>
               </view>
-<!--              <view class="menu-item" @click="addSearchEngines">-->
-<!--                <i class="menu-icon el-icon-plus"></i>-->
-<!--                <span>添加搜索引擎</span>-->
-<!--              </view>-->
+              <!--              <view class="menu-item" @click="addSearchEngines">-->
+              <!--                <i class="menu-icon el-icon-plus"></i>-->
+              <!--                <span>添加搜索引擎</span>-->
+              <!--              </view>-->
             </view>
             <view @click="!popoverVisible" slot="reference" v-show="showLongInput" class="search-item search-type">
               <img class="search-item-img" :src="searchEngines[default_search].icon" alt="">
@@ -42,7 +42,7 @@
               <Tools :shortcuts_list="shortcuts_list"/>
             </view>
             <view v-show="!showWorks">
-              <Comments/>
+              <Comments :stickyNoteList="stickyNoteList"/>
             </view>
           </view>
           <view class="navPageBox">
@@ -172,14 +172,18 @@
           </view>
         </view>
       </el-dialog>
-      <!--      <view class="dingTag">-->
-      <!--        <view class="tabs">-->
-      <!--          <view class="box shadow">-->
-      <!--            <view>鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客鸢离的博客</view>-->
-      <!--            <view class="circle"></view>-->
-      <!--          </view>-->
-      <!--        </view>-->
-      <!--      </view>-->
+      <view class="dingTag">
+        <view class="tabs" v-for="(item,index) in stickyNoteList" v-if="item.isDing == true">
+          <view class="tabs-text">
+            {{ item.data }}
+          </view>
+          <view class="tabs-time">
+            {{ changeTime(item.time) }}
+          </view>
+          <i class="el-icon-close tabs-close" @click="deleteDing(item,index)"></i>
+          <view class="circle"></view>
+        </view>
+      </view>
       <view class="footer">
         {{ dateYear }} © 鸢离
       </view>
@@ -194,13 +198,15 @@ import {
   get_user_info,
   save_current_image,
   update_basic_settings,
-  update_info, update_search_engines
+  update_info,
+  update_search_engines, update_sticky_note
 } from "../../service/service";
 import Tools from '../../compontent/tools'
 import Comments from '../../compontent/comments'
 import Userinfo from '../../compontent/userInfo'
 import {goToLoginPage} from '../../utils/routers'
 import store from "store";
+import {fnTime} from "../../utils/utils";
 
 export default {
   components: {
@@ -272,7 +278,10 @@ export default {
       ],
       selectTarget: "https://www.baidu.com/s?wd=",
       default_search: 0,
-      popoverVisible:false
+      popoverVisible: false,
+
+      //  便利贴功能
+      stickyNoteList: []
     }
   },
   onLoad() {
@@ -289,7 +298,9 @@ export default {
               this.info = res.info[0]
               this.shortcuts_list = JSON.parse(res.shortcuts_list)
               this.default_search = Number(res.default_search)
-              if (res.background_image !== "null") {
+              this.stickyNoteList = JSON.parse(res.stickyNoteList)
+              if (res.background_image !== "null" || res.background_image !== "") {
+                //说明背景图不为空
                 this.selfImage = true
                 this.backgroundImage = res.background_image
               } else {
@@ -451,32 +462,37 @@ export default {
       this.selectTarget = item.target
       this.default_search = index
       this.popoverVisible = false
-      update_search_engines({default_search:this.default_search}).then(
-          (res)=>{
-            console.log(res)
-          }
-      )
+      if (this.haveToken) {
+        update_search_engines({default_search: this.default_search}).then(
+            (res) => {
+              console.log(res)
+            }
+        )
+      }
     },
     searchData() {
       window.location.href = this.selectTarget + this.inputVlaue
     },
     // 添加搜素引擎
-    addSearchEngines(){
+    addSearchEngines() {
 
     },
-    updateSearchEngines(){
+    updateSearchEngines() {
 
-    }
+    },
+    changeTime(time) {
+      return fnTime(time)
+    },
+    //dingtag
+    deleteDing(item, index) {
+      item.isDing = false
+      this.$set(this.stickyNoteList, index, item)
+      this.updateStickyNote()
+    },
+    updateStickyNote(){
+      update_sticky_note({stickyNoteList:JSON.stringify(this.stickyNoteList)})
+    },
   },
-  // watch: {
-  //   showLongInput(value) {
-  //     if (value) {
-  //       document.body.addEventListener('click', this.handleClickClose)
-  //     } else {
-  //       document.body.removeEventListener('click', this.handleClickClose)
-  //     }
-  //   },
-  // },
   onHide() {
     if (this.timer) {
       clearInterval(this.timer); // 在Vue实例销毁前，清除我们的定时器
@@ -845,34 +861,31 @@ export default {
 }
 
 
-.tabs {
-  width: 150px;
-  position: absolute;
-  left: 20px;
-  top: 30px;
-}
+/*.tabs {*/
 
-.box {
-  min-width: 300px;
-  max-height: 150px;
-  overflow-y: auto;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, .1);
-  backdrop-filter: blur(10px);
-  margin-bottom: 30px;
-  padding: 10px 10px 10px 30px;
-  box-shadow: 1px 2px 1px -1px #777;
-  transition: background 300ms ease-in-out;
-  text-align: left;
-  box-sizing: border-box;
-  /*transform: translateX(-45px);*/
-  cursor: pointer;
-  color: #fff;
-}
+/*}*/
 
-.box ::-webkit-scrollbar {
-  display: none
-}
+/*.box {*/
+/*  min-width: 300px;*/
+/*  max-height: 150px;*/
+/*  overflow-y: auto;*/
+/*  border-radius: 6px;*/
+/*  background: rgba(255, 255, 255, .1);*/
+/*  backdrop-filter: blur(10px);*/
+/*  margin-bottom: 30px;*/
+/*  padding: 10px 10px 10px 30px;*/
+/*  box-shadow: 1px 2px 1px -1px #777;*/
+/*  transition: background 300ms ease-in-out;*/
+/*  text-align: left;*/
+/*  box-sizing: border-box;*/
+/*  !*transform: translateX(-45px);*!*/
+/*  cursor: pointer;*/
+/*  color: #fff;*/
+/*}*/
+
+/*.box ::-webkit-scrollbar {*/
+/*  display: none*/
+/*}*/
 
 /*.box:hover{*/
 /*  animation: transx 500ms;*/
@@ -886,45 +899,35 @@ export default {
 /*    transform:translateX(0);*/
 /*  }*/
 /*}*/
-.box a {
-  color: rgba(255, 255, 255, .8);
-  text-decoration: none;
-  font-size: 15px;
-}
-
-.shadow:before {
-  z-index: -1;
-  position: absolute;
-  content: "";
-  top: 0;
-  right: 0;
-  width: 75%;
-  -webkit-transform: rotate(4deg);
-  transform: rotate(4deg);
-  transition: all 150ms ease-in-out;
-}
-
-.box:hover {
-  background: rgba(255, 255, 255, .5);
-}
-
-/*.shadow:hover::before {*/
-/*  -webkit-transform: rotate(0deg);*/
-/*  transform: rotate(0deg);*/
-/*  bottom: 20px;*/
-/*  z-index: -10;*/
+/*.box a {*/
+/*  color: rgba(255, 255, 255, .8);*/
+/*  text-decoration: none;*/
+/*  font-size: 15px;*/
 /*}*/
 
-.circle {
-  position: absolute;
-  top: 50%;
-  left: 5px;
-  transform: translateY(-50%);
-  border-radius: 50%;
-  box-shadow: inset 1px 1px 1px 0 rgba(0, 0, 0, 0.5), inset 0 0 0 25px rgba(255, 255, 255, .25);
-  width: 20px;
-  height: 20px;
-}
+/*.shadow:before {*/
+/*  z-index: -1;*/
+/*  position: absolute;*/
+/*  content: "";*/
+/*  top: 0;*/
+/*  right: 0;*/
+/*  width: 75%;*/
+/*  -webkit-transform: rotate(4deg);*/
+/*  transform: rotate(4deg);*/
+/*  transition: all 150ms ease-in-out;*/
+/*}*/
+
+/*.box:hover {*/
+/*  background: rgba(255, 255, 255, .5);*/
+/*}*/
+
+/*!*.shadow:hover::before {*!*/
+/*!*  -webkit-transform: rotate(0deg);*!*/
+/*!*  transform: rotate(0deg);*!*/
+/*!*  bottom: 20px;*!*/
+/*!*  z-index: -10;*!*/
+/*!*}*!*/
+
 
 .search-item {
   /*pointer-events: none;*/
@@ -940,7 +943,8 @@ export default {
   transition: .25s;
   text-align: center;
 }
-.search-item-img{
+
+.search-item-img {
   width: 28px;
   height: auto;
 }
@@ -977,13 +981,99 @@ export default {
 .menu-item:hover {
   background-color: rgba(0, 0, 0, .1);
 }
-.menu-icon{
+
+.menu-icon {
   margin-right: 15px;
   font-size: 14px;
 }
-.menu-img{
+
+.menu-img {
   width: 14px;
   height: 14px;
   margin-right: 15px;
+}
+
+.dingTag {
+  position: absolute;
+  left: 10px;
+  padding: 40px 10px 10px 20px;
+  max-height: calc(100vh - 60px);
+  perspective-origin: 145px 68px;
+  perspective: 500px;
+  overflow-y: auto;
+  transition: .25s;
+}
+
+.tabs {
+  margin-bottom: 10px;
+  width: 200px;
+  padding: 10px 10px 10px 30px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, .8);
+  border-radius: 5px;
+  box-shadow: rgb(0 0 0 / 5%) 0 10px 20px;
+  transition: .25s;
+  cursor: pointer;
+  font-family: "Helvetica Neue", Helvetica, Tahoma, Arial, "PingFang SC", "Microsoft Yahei", sans-serif;
+  position: relative;
+}
+
+.tabs-text {
+  display: inline-block;
+  width: 180px;
+  max-height: 20px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: black;
+  font-size: small;
+}
+
+.tabs-time {
+  color: rgba(0, 0, 0, .35);
+  font-size: 12px;
+}
+
+.tabs-close {
+  z-index: 99;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 18px;
+  height: 18px;
+  color: rgba(0, 0, 0, .5);
+  cursor: pointer;
+  transition: .25s;
+  font-size: 20px;
+  display: none;
+}
+
+.tabs:hover .tabs-close {
+  display: block;
+  transition: .25s;
+  color: #70C000;
+  transform: rotateY(5deg);
+}
+
+.tabs:hover {
+  transform: rotateY(5deg);
+}
+
+.circle {
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  box-shadow: inset 1px 1px 1px 0 rgba(0, 0, 0, 0.5), inset 0 0 0 25px rgba(255, 255, 255, .25);
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, .5);
+}
+
+@media screen and (max-width: 600px) {
+  .dingTag {
+    display: none;
+  }
 }
 </style>
