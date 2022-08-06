@@ -158,6 +158,14 @@ export default {
         });
         return;
       }
+      if(!this.CheckUrl(this.url)){
+        this.$message({
+          showClose: true,
+          message: '您输入的网址有误',
+          type: 'warning'
+        });
+        return;
+      }
       this.loading = true
       //  智能获取icon
       this.isText = false
@@ -170,11 +178,27 @@ export default {
           }
       )
     },
+    CheckUrl(url){
+      try{
+        new URL(url);
+        return true;
+      }catch(err){
+        return false
+      }
+    },
     changeText() {
       if(!this.url){
         this.$message({
           showClose: true,
           message: '网址不能为空',
+          type: 'warning'
+        });
+        return;
+      }
+      if(!this.CheckUrl(this.url)){
+        this.$message({
+          showClose: true,
+          message: '您输入的网址有误',
           type: 'warning'
         });
         return;
@@ -200,6 +224,14 @@ export default {
         this.$message({
           showClose: true,
           message: '网址不能为空',
+          type: 'warning'
+        });
+        return;
+      }
+      if(!this.CheckUrl(this.url)){
+        this.$message({
+          showClose: true,
+          message: '您输入的网址有误',
           type: 'warning'
         });
         return;
