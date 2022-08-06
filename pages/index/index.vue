@@ -718,6 +718,7 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: #70C000;
 }
 
 /deep/ .el-dialog {
