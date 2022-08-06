@@ -11,7 +11,5 @@ export const goToLoginPage = (route) => {
 }
 
 export const redirectToIndex = () => {
-    uni.redirectTo({
-        url:'/pages/index/index'
-    })
+   window.location.href = '/pages/index/index'
 }
