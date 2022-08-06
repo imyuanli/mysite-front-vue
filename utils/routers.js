@@ -12,5 +12,5 @@ export const goToLoginPage = (route) => {
 }
 
 export const redirectToIndex = () => {
-   window.location.href = '/pages/index/index'
+   window.location.href = '/'
 }
