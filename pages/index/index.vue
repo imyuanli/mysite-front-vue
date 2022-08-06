@@ -299,7 +299,7 @@ export default {
               this.shortcuts_list = JSON.parse(res.shortcuts_list)
               this.default_search = Number(res.default_search)
               this.stickyNoteList = JSON.parse(res.stickyNoteList)
-              if (res.background_image !== "null" || res.background_image !== "") {
+              if (res.background_image !== "null") {
                 //说明背景图不为空
                 this.selfImage = true
                 this.backgroundImage = res.background_image
