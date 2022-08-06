@@ -99,6 +99,7 @@ export default {
         this.currentItem.isDing = true
         this.$set(this.stickyNoteList, this.currentIndex, this.currentItem)
         this.updateStickyNote()
+        this.addNote()
       }
     },
     addNote() {
@@ -115,6 +116,7 @@ export default {
             data: this.texTareaValue
           }
           this.$set(this.stickyNoteList,this.currentIndex,obj)
+          this.currentItem = this.stickyNoteList[this.currentIndex]
         }
         else{
           // 新的blank保存数据
@@ -135,6 +137,7 @@ export default {
       isLogin()
       if(store.get('token')){
         this.texTareaValue = ""
+        // this.isBlank =
         let today = Date.now()
         let obj = {
           time: today,
