@@ -298,6 +298,7 @@ export default {
               this.info = res.info[0]
               this.shortcuts_list = JSON.parse(res.shortcuts_list)
               this.default_search = Number(res.default_search)
+              this.selectTarget = this.searchEngines[res.default_search].target
               this.stickyNoteList = JSON.parse(res.stickyNoteList)
               if (res.background_image !== "null") {
                 //说明背景图不为空
@@ -463,15 +464,12 @@ export default {
       this.default_search = index
       this.popoverVisible = false
       if (this.haveToken) {
-        update_search_engines({default_search: this.default_search}).then(
-            (res) => {
-              console.log(res)
-            }
-        )
+        update_search_engines({default_search: this.default_search})
       }
     },
     searchData() {
-      window.location.href = this.selectTarget + this.inputVlaue
+      let value = this.inputVlaue.replaceAll('&','%26')
+      window.open(this.selectTarget + value)
     },
     // 添加搜素引擎
     addSearchEngines() {
