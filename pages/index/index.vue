@@ -127,7 +127,7 @@
               trigger="click">
             <view>
               <view class="userInfo" @click="showDialog">
-                <span class="userName">鸢离</span>
+                <span class="userName">{{userName}}</span>
                 <span>账号管理</span>
               </view>
               <view class="userInfo">
@@ -824,6 +824,10 @@ export default {
   font-size: 26px;
   font-family: "Helvetica Neue", Helvetica, Tahoma, Arial, "PingFang SC", "Microsoft Yahei", sans-serif;
   transition: .25s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 80%;
 }
 
 /deep/ .el-input__inner:focus {
