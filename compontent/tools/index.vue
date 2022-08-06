@@ -69,9 +69,9 @@
         </view>
       </view>
       <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button v-if="!isUpdate" type="primary" @click="addShortcuts">确 定</el-button>
-    <el-button  v-if="isUpdate" type="primary" @click="addShortcuts(isUpdate)">更 新</el-button>
+    <el-button @click="handleClose">取 消</el-button>
+    <el-button v-if="!isUpdate" type="primary" @click="addShortcuts(false)">确 定</el-button>
+    <el-button  v-if="isUpdate" type="primary" @click="addShortcuts(true)">更 新</el-button>
   </span>
     </el-dialog>
   </view>
@@ -135,6 +135,7 @@ export default {
     },
     handleClose() {
       this.dialogVisible = false
+      this.isUpdate = false
     },
     handleOpen() {
       isLogin()
@@ -225,6 +226,7 @@ export default {
       }
       this.updateShortcuts()
       this.dialogVisible = false
+      this.isUpdate = false
     },
     updateShortcuts(){
       update_shortcuts({shortcuts_list:JSON.stringify(this.shortcuts_list)}).then(
@@ -254,7 +256,6 @@ export default {
       this.visible = false;
     },
     toolItemEdit(){
-
       const {url,title,iconObj} = this.rightClickItem
       this.dialogVisible = true
       this.url = url
