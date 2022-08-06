@@ -77,11 +77,7 @@ export default {
           this.time = 60
         }
       }, 1000)
-      get_login_code({email:this.email}).then(
-          (res)=>{
-            console.log(res)
-          }
-      )
+      get_login_code({email:this.email})
     },
     getLogin(){
       const { email, code } = this;
@@ -116,6 +112,9 @@ export default {
             }
           }
       )
+      this.timer = setTimeout(()=>{
+        this.loading = false
+      },2000)
     }
   },
   onLoad(){
@@ -123,6 +122,10 @@ export default {
       redirectToIndex()
     }
   },
+  destroyed(){
+    clearInterval(this.interval)
+    clearTimeout( this.timer)
+  }
 };
 </script>
 

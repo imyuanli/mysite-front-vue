@@ -41,6 +41,7 @@ function request(url, data = {}, method = 'GET') {
         else if (res.data.errno === 1009) {
           Message({
             message: res.data.errmsg,
+            type: 'error',
           })
         }
         else if (res.data.errno === 99) {

@@ -74,7 +74,6 @@
     <el-button  v-if="isUpdate" type="primary" @click="addShortcuts(isUpdate)">更 新</el-button>
   </span>
     </el-dialog>
-
   </view>
   <view v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
     <view class="menu" @click="toolItemEdit">
@@ -91,7 +90,8 @@
 
 <script>
 import {get_url_icon, get_url_title, update_shortcuts} from "../../service/service";
-
+import {isLogin} from "../../utils/utils";
+import store from 'store'
 export default {
   name: "Tools",
   props: {
@@ -101,113 +101,6 @@ export default {
   },
   data() {
     return {
-      toolsArr: [
-        {
-          name: '翻译翻译',
-          icon: '翻译翻译翻译翻译',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译2',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译3',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译4',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-        {
-          name: '翻译',
-          icon: 'icon',
-          url: 'https://fanyi.baidu.com/'
-        },
-      ],
       enterIndex: "",
       // startDrag:false,
       dialogVisible: false,
@@ -230,9 +123,6 @@ export default {
     }
   },
   methods: {
-    // handleDragStart(){
-    //   this.startDrag = true
-    // },
     handleDragEnd(e, item, index) {
       let enterIndex = this.enterIndex
       let tempOption = this.toolsArr[index];
@@ -247,9 +137,12 @@ export default {
       this.dialogVisible = false
     },
     handleOpen() {
-      this.isText = false
-      this.dialogVisible = true
-      this.changeIconObj(this.defaultIcon, false)
+      isLogin()
+      if(store.get('token')){
+        this.isText = false
+        this.dialogVisible = true
+        this.changeIconObj(this.defaultIcon, false)
+      }
     },
     getUrlIcon() {
       if(!this.url){
@@ -361,7 +254,7 @@ export default {
       this.visible = false;
     },
     toolItemEdit(){
-      console.log(this.rightClickItem)
+
       const {url,title,iconObj} = this.rightClickItem
       this.dialogVisible = true
       this.url = url

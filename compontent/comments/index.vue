@@ -26,7 +26,7 @@
       <!--          <i class="btn-icon el-icon-caret-right"></i>-->
       <!--        </view>-->
       <!--      </view>-->
-      <textarea class="mytextarea" placeholder="友善交流 or Ding一下添加便利贴"
+      <textarea @click="isNeedLogin" class="mytextarea" placeholder="友善交流 or Ding一下添加便利贴"
                 name=""
                 id=""
                 v-model="texTareaValue"
@@ -57,8 +57,9 @@
 
 <script>
 import {update_sticky_note} from "../../service/service";
-import {fnTime} from "../../utils/utils";
-
+import {fnTime, isLogin} from "../../utils/utils";
+import store from 'store'
+import {goToLoginPage} from "../../utils/routers";
 export default {
   name: "index",
   props: {
@@ -74,12 +75,16 @@ export default {
     }
   },
   methods: {
+    isNeedLogin(){
+     isLogin()
+    },
     chooseNode(item, index) {
       this.texTareaValue = item.data
       this.currentIndex = index
       this.currentItem = item
     },
     deleteNote() {
+      isLogin()
       this.stickyNoteList.splice(this.currentIndex, 1)
       //置空
       this.texTareaValue = ""
@@ -89,52 +94,57 @@ export default {
       this.updateStickyNote()
     },
     dingNote() {
+      isLogin()
       if (this.currentItem) {
         this.currentItem.isDing = true
         this.$set(this.stickyNoteList, this.currentIndex, this.currentItem)
         this.updateStickyNote()
-      } else {
       }
     },
     addNote() {
-      //获取当前时间戳
-      let today = Date.now()
-      console.log(this.currentIndex)
-      //添加或修改完默认选中之前的
-      if(String(this.currentIndex)){
-        //如果有这个就是修改数据
-        let obj = {
-          time: today,
-          isDing: this.stickyNoteList[this.currentIndex].isDing,
-          data: this.texTareaValue
+      isLogin()
+      if(store.get('token')){
+        //获取当前时间戳
+        let today = Date.now()
+        //添加或修改完默认选中之前的
+        if(String(this.currentIndex)){
+          //如果有这个就是修改数据
+          let obj = {
+            time: today,
+            isDing: this.stickyNoteList[this.currentIndex].isDing,
+            data: this.texTareaValue
+          }
+          this.$set(this.stickyNoteList,this.currentIndex,obj)
         }
-        this.$set(this.stickyNoteList,this.currentIndex,obj)
+        else{
+          // 新的blank保存数据
+          let obj = {
+            time: today,
+            isDing: false,
+            data: this.texTareaValue
+          }
+          this.stickyNoteList.unshift(obj)
+          this.currentIndex = 0
+          this.currentItem = this.stickyNoteList[0]
+        }
+        //新增 和更新
+        this.updateStickyNote()
       }
-      else{
-      // 新的blank保存数据
+    },
+    addBlankNote(){
+      isLogin()
+      if(store.get('token')){
+        this.texTareaValue = ""
+        let today = Date.now()
         let obj = {
           time: today,
           isDing: false,
-          data: this.texTareaValue
+          data: "",
         }
         this.stickyNoteList.unshift(obj)
         this.currentIndex = 0
         this.currentItem = this.stickyNoteList[0]
       }
-      //新增 和更新
-      this.updateStickyNote()
-    },
-    addBlankNote(){
-      this.texTareaValue = ""
-      let today = Date.now()
-      let obj = {
-        time: today,
-        isDing: false,
-        data: "",
-      }
-      this.stickyNoteList.unshift(obj)
-      this.currentIndex = 0
-      this.currentItem = this.stickyNoteList[0]
     },
     //增删改
     updateStickyNote(){

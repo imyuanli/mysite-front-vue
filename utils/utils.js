@@ -1,15 +1,9 @@
-// import store from "store";
-//
-// export const getStore=(arg)=>{
-//     store.get(arg)
-// }
-// export const setStore=(arg,prop)=>{
-//     store.set(arg,prop)
-// }
-//
-// export const removeStore=(arg)=>{
-//     store.remove(arg)
-// }
+import {
+    Message,
+} from 'element-ui'
+import store from "store";
+import {goToLoginPage} from "./routers";
+
 export const fnTime = (time) => {
     let ptime = new Date(time).toLocaleString()
     let timeArr = ptime.split(' ')
@@ -38,4 +32,16 @@ export const myGetYear = (year) => {
 export const myGetMinutes = (minutes) => {
     let minutesArr = minutes.split(':')
     return minutesArr[0] + ":" + minutesArr[1]
+}
+
+export const isLogin =()=>{
+    if(!store.get('token')){
+        Message({
+            showClose: true,
+            message: '登录一下吧',
+            type: 'warning'
+        });
+        goToLoginPage()
+        return
+    }
 }
