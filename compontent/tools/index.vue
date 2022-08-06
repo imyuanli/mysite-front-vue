@@ -161,7 +161,7 @@ export default {
       if(!this.CheckUrl(this.url)){
         this.$message({
           showClose: true,
-          message: '您输入的网址有误',
+          message: '可能需要添加http://或https://,也可能网址有误',
           type: 'warning'
         });
         return;
@@ -198,7 +198,7 @@ export default {
       if(!this.CheckUrl(this.url)){
         this.$message({
           showClose: true,
-          message: '您输入的网址有误',
+          message: '可能需要添加http://或https://,也可能网址有误',
           type: 'warning'
         });
         return;
@@ -231,7 +231,7 @@ export default {
       if(!this.CheckUrl(this.url)){
         this.$message({
           showClose: true,
-          message: '您输入的网址有误',
+          message: '可能需要添加http://或https://,也可能网址有误',
           type: 'warning'
         });
         return;

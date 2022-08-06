@@ -797,6 +797,7 @@ export default {
   left: 70px;
   max-width: calc(100% - 85px);
   overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
   color: rgba(0, 0, 0, .6);
 }
