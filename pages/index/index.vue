@@ -54,7 +54,7 @@
             </view>
           </view>
         </view>
-        <view v-show="showWeather == 1">
+        <view v-show="showWeather == 1" style="width: 80%">
           <view class="famous-info-box" v-show="showLongInput">
             <view class="famous-info">
               「 {{famousInfo.hitokoto}} 」
@@ -151,7 +151,9 @@
       </view>
       <el-dialog
           :visible.sync="dialogVisible"
-          :before-close="handleClose">
+          :before-close="handleClose"
+          :append-to-body="true"
+      >
         <view slot="title" class="header-title">
           欢迎你，<span style="color:#70C000;">{{ userName }}</span>
         </view>
@@ -455,13 +457,22 @@ export default {
       this.changeNameValue = this.userName
     },
     updateUserName(i, index) {
+      let user_name = this.changeNameValue.replace(/\s*/g,'')
+      if(!user_name){
+        this.$message({
+          message: '用户名不能输入空',
+          center: true,
+          type:'warning'
+        });
+        return;
+      }
       let obj = {
-        data: this.changeNameValue,
+        data: user_name,
         name: "姓名",
         should_edit: "true",
       }
       this.$set(this.info, index, obj);
-      update_info({user_name: this.changeNameValue}).then(
+      update_info({user_name}).then(
           (res) => {
             if (res) {
               this.userName = res
@@ -590,7 +601,6 @@ export default {
               from:data.from,
               hitokoto:data.hitokoto,
             }
-            console.log(this.famousInfo)
           }
       )
     }
@@ -598,11 +608,6 @@ export default {
   onHide() {
     if (this.timer) {
       clearInterval(this.timer); // 在Vue实例销毁前，清除我们的定时器
-    }
-  },
-  watch:{
-    showWeather(value){
-      console.log(value)
     }
   }
 }
@@ -1209,7 +1214,7 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   bottom: 125px;
-  width: 530px;
+  width: 80%;
   padding: 15px 50px;
   border-radius: 15px;
   color: rgba(255,255,255,.9);

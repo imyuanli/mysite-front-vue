@@ -237,6 +237,9 @@ export default {
           message: '可能需要添加http://或https://,也可能网址有误',
           type: 'warning'
         });
+        this.timer = setTimeout(()=>{
+          this.btnLoading = false
+        },2000)
         return;
       }
       let obj = {}
@@ -318,7 +321,9 @@ export default {
         document.body.removeEventListener('click', this.closeMenu)
       }
     },
-
+  },
+  destroyed(){
+    clearTimeout( this.timer)
   }
 }
 </script>
