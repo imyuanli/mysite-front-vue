@@ -1,5 +1,5 @@
 <template>
-  <view class="content" :style="{'backgroundImage':`url(${backgroundImage})`}">
+  <view class="content" v-loading="backImageLoading" :style="{'backgroundImage':`url(${backgroundImage})`}">
     <!--  <view class="content">-->
     <view @click.self="handleClickClose()" :class="[showLongInput?'contentBox showBlur':'contentBox']">
       <view>
@@ -81,7 +81,7 @@
               </view>
             </view>
             <i v-if="!selfImage" @click="saveCurrentImage" class="el-icon-star-off icon-btn"></i>
-            <i v-if="selfImage" @click="delCurrentImage" class="el-icon-star-on icon-btn"></i>
+            <i v-if="selfImage" @click="delCurrentImage(true)" class="el-icon-star-on icon-btn"></i>
           </el-tooltip>
         </view>
         <view class="lFBox">
@@ -303,7 +303,8 @@ export default {
       greetInfo:'',
 
       // 名人名言
-      famousInfo:""
+      famousInfo:"",
+      backImageLoading:false
     }
   },
   onLoad() {
@@ -334,7 +335,6 @@ export default {
             this.getBasicSettings()
           }
       )
-
     }
     //没有登录也是随机刷新
     else {
@@ -401,12 +401,16 @@ export default {
       this.dateYear = date.getFullYear()
     },
     getBackgroundImage() {
+      this.backImageLoading = true
       get_background_mage().then(
           (res) => {
-            if (this.selfImage) {
-              this.delCurrentImage()
+            if(res){
+              if (this.selfImage) {
+                this.delCurrentImage(false)
+              }
+              this.backgroundImage = res
+              this.backImageLoading = false
             }
-            this.backgroundImage = res
           }
       )
     },
@@ -492,17 +496,20 @@ export default {
       )
     },
     //取消当前的永久壁纸
-    delCurrentImage() {
+    delCurrentImage(isHandle) {
+      this.backImageLoading = true
       save_current_image({background_image: ''}).then(
           (res) => {
             if (res) {
               this.selfImage = false
-              this.getBackgroundImage()
+              if(isHandle){
+                this.getBackgroundImage()
+              }
+              this.backImageLoading = false
             }
           }
       )
     },
-
     //  基础设置
     getBasicSettings() {
       get_basic_settings().then(
@@ -565,7 +572,6 @@ export default {
     searchData() {
       let value =""
       value = this.inputVlaue.replaceAll('&','%26')
-      console.log(value)
       value = this.inputVlaue.replaceAll('#','%23')
       // window.open(this.selectTarget + value)
       window.location.href = this.selectTarget + value
