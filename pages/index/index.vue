@@ -54,6 +54,16 @@
             </view>
           </view>
         </view>
+        <view v-show="showWeather == 1">
+          <view class="famous-info-box" v-show="showLongInput">
+            <view class="famous-info">
+              「 {{famousInfo.hitokoto}} 」
+            </view>
+            <view class="famous-form">
+              —— {{famousInfo.from}}
+            </view>
+          </view>
+        </view>
       </view>
       <view class="loginAndFlash">
         <view class="lFBox">
@@ -185,7 +195,12 @@
         </view>
       </view>
       <view class="footer">
-        {{ dateYear }} © 鸢离
+        © {{ dateYear }} 鸢离
+        <span v-show="showConciseFooter == 1">
+          <span class="geduan">|</span>
+          <a class="icp" href="">dasd</a>
+          <span class="geduan">|</span>
+          <a class="icp" href="">dasd</a></span>
       </view>
     </view>
   </view>
@@ -194,7 +209,7 @@
 <script>
 import {
   get_background_mage,
-  get_basic_settings,
+  get_basic_settings, get_famous,
   get_user_info,
   save_current_image,
   update_basic_settings,
@@ -244,10 +259,10 @@ export default {
       changeNameValue: "",
       selfImage: false,  //false
       //  基础设置
-      showSeconds: false,
-      showWeather: false,
-      showConciseFooter: false,
-      showToGreet: false,
+      showSeconds: 0,
+      showWeather: 0,
+      showConciseFooter: 0,
+      showToGreet: 0,
       //  搜索引擎
       searchEngines: [
         {
@@ -282,7 +297,11 @@ export default {
 
       //  便利贴功能
       stickyNoteList: [],
-      detailsIndex:''
+      detailsIndex:'',
+      greetInfo:'',
+
+      // 名人名言
+      famousInfo:""
     }
   },
   onLoad() {
@@ -290,6 +309,7 @@ export default {
     this.timer = setInterval(() => {
       this.getNowTime()
     }, 1000);
+    this.showGreete()
     if (store.get('token')) {
       this.haveToken = true
       get_user_info().then(
@@ -309,9 +329,10 @@ export default {
                 this.getBackgroundImage()
               }
             }
+            this.getBasicSettings()
           }
       )
-      this.getBasicSettings()
+
     }
     //没有登录也是随机刷新
     else {
@@ -336,6 +357,26 @@ export default {
     }
   },
   methods: {
+    showGreete(){
+      var dd= new Date();
+      var hour =dd.getHours();//获取当前时
+      //alert(hour);
+      if(hour>0 && hour<=6){
+        this.greetInfo="还没休息啊，该休息了";
+      }else if(hour>6 && hour<=9){
+        this.greetInfo="上午好";
+      }else if(hour>9 && hour<=12){
+        this.greetInfo="早上好";
+      }else if(hour>12 && hour<=14){
+        this.greetInfo="中午好";
+      }else if(hour>14 && hour<=18){
+        this.greetInfo="下午好";
+      }else if(hour>18 && hour<=21){
+        this.greetInfo="傍晚好";
+      }else if(hour>21 && hour<=24){
+        this.greetInfo="晚上好";
+      }
+    },
     handleClickOpen() {
       this.showLongInput = true
     },
@@ -460,6 +501,16 @@ export default {
             this.showWeather = res.show_weather
             this.showConciseFooter = res.show_concise_footer
             this.showToGreet = res.show_to_greet
+            if(res.show_to_greet ==1){
+              this.$message({
+                message: this.userName +','+this.greetInfo,
+                center: true,
+                iconClass:'el-icon-mm',
+              });
+            }
+            if(res.show_weather == 1){
+              this.getFamous()
+            }
           }
       )
     },
@@ -469,13 +520,28 @@ export default {
       if (type == 'show_seconds') {
         this.showSeconds = data
       }
+      if (type == 'show_concise_footer') {
+        this.showConciseFooter = data
+      }
+      if (type == 'show_to_greet') {
+        this.showToGreet = data
+      }
+      if (type == 'show_weather') {
+        this.showWeather = data
+      }
       let obj = {
         name: item.name,
         type: item.type,
         data,
       }
       this.$set(this.basic_settings, index, obj);
-      update_basic_settings({type, data})
+      update_basic_settings({type, data}).then(
+          (res)=>{
+            if(res.show_weather && res.show_weather ==1){
+              this.getFamous()
+            }
+          }
+      )
     },
     selectEngines(item, index) {
       this.selectTarget = item.target
@@ -512,6 +578,21 @@ export default {
     showDetails(index){
       this.detailsIndex = index
       this.showWorks = false
+    },
+    getFamous(){
+      get_famous().then(
+          (res1)=>{
+            let data = JSON.parse(res1).data
+            // creator: "树形图设计者"
+            // from: "克尔苏加德"
+            // hitokoto: "退后，你们这些无知的家伙！你不会就这样死的，我的国王！"
+            this.famousInfo={
+              from:data.from,
+              hitokoto:data.hitokoto,
+            }
+            console.log(this.famousInfo)
+          }
+      )
     }
   },
   onHide() {
@@ -519,10 +600,15 @@ export default {
       clearInterval(this.timer); // 在Vue实例销毁前，清除我们的定时器
     }
   },
+  watch:{
+    showWeather(value){
+      console.log(value)
+    }
+  }
 }
 </script>
 
-<style>
+<style scoped>
 .content {
   background-image: url("../../static/backimg.jpg");
   background-size: cover;
@@ -1106,4 +1192,45 @@ export default {
     display: none;
   }
 }
+.geduan{
+  margin: 0 10px;
+
+}
+.icp{
+  color: rgba(255, 255, 255, .6);
+  text-decoration: none;
+}
+.el-icon-mm{
+  display: none;
+}
+
+.famous-info-box{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 125px;
+  width: 530px;
+  padding: 15px 50px;
+  border-radius: 15px;
+  color: rgba(255,255,255,.9);
+  font-size: small;
+  text-align: center;
+  cursor: default;
+  transition: .5s;
+}
+.famous-info{
+  text-shadow: 0 0 20px rgb(0 0 0 / 80%);
+  transition: .25s;
+}
+.famous-form{
+  opacity: 0;
+  margin-top: 8px;
+}
+.famous-info-box:hover{
+  background-color: rgba(255,255,255,.1);
+}
+.famous-info-box:hover .famous-form{
+  opacity: 1;
+}
+
 </style>
