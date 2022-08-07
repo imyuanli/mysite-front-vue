@@ -22,7 +22,7 @@
       >
         <view @contextmenu.prevent="rightClick($event,items,index)" class="itemBox" @click="redirectToUrl(items.url)">
           <view v-if="items.iconObj.isText">
-            {{ items.iconObj.data }}
+            {{ items.iconObj.data.substring(0,5)}}
           </view>
           <view v-if="!items.iconObj.isText">
             <img class="edit-icon" :src="items.iconObj.data" alt="">
@@ -52,7 +52,7 @@
         <view class="edit-box">
           <span class="edit-title">图标</span>
           <view class="edit-icon-box">
-            <span v-if="isText">{{title.substring(0, 5)}}</span>
+            <span v-if="isText" style="font-size:12px ">{{title.substring(0,5)}}</span>
             <img v-if="!isText" class="edit-icon" :src="icon" alt="">
           </view>
           <view class="edit-btn-box">
@@ -204,9 +204,12 @@ export default {
         return;
       }
       this.isText = true
+
       get_url_title({domain: this.url}).then(
           (res)=>{
-            this.title = res
+            if(!this.title){
+              this.title = res
+            }
           }
       )
     },
