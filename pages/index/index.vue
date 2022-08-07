@@ -563,7 +563,10 @@ export default {
       }
     },
     searchData() {
-      let value = this.inputVlaue.replaceAll('&','%26')
+      let value =""
+      value = this.inputVlaue.replaceAll('&','%26')
+      console.log(value)
+      value = this.inputVlaue.replaceAll('#','%23')
       // window.open(this.selectTarget + value)
       window.location.href = this.selectTarget + value
     },
