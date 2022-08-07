@@ -1,20 +1,22 @@
 <template>
   <view class="comment-box">
     <view class="node-list">
-      <view class="node-btn" @click="addBlankNote">
+      <view class="node-btn" @click="addBlankNote" >
         <i class="el-icon-plus node-icon"></i>
         <span>新的便利贴</span>
       </view>
-      <view class="node-item-box">
-        <view class="node-item-main">
-          <view :class="currentIndex === index?'activeChoose':''" class="node-item"
-                v-for="(item,index) in stickyNoteList" @click="chooseNode(item,index)">
-            <view class="node-text">
-              {{ item.data }}
-            </view>
-            <view class="node-time">
-              {{ changeTime(item.time) }}
-            </view>
+      <view class="node-item-main" id="node-item-main">
+        <view :class="currentIndex === index?'activeChoose':''"
+              class="node-item"
+              v-for="(item,index) in stickyNoteList"
+              @click="chooseNode(item,index)"
+              :id="'li' + index"
+        >
+          <view class="node-text">
+            {{ item.data }}
+          </view>
+          <view class="node-time">
+            {{ changeTime(item.time) }}
           </view>
         </view>
       </view>
@@ -65,6 +67,9 @@ export default {
   props: {
     stickyNoteList: {
       type: Array,
+    },
+    detailsIndex:{
+
     }
   },
   data() {
@@ -155,6 +160,16 @@ export default {
     },
     changeTime(time){
       return fnTime(time)
+    }
+  },
+  watch:{
+    detailsIndex(value){
+      this.texTareaValue = this.stickyNoteList[value].data
+      this.currentIndex = value
+      this.currentItem = this.stickyNoteList[value]
+      let target = document.getElementById(`li${value}`);
+      let parent = document.getElementById('node-item-main');
+      parent.scrollTo(0, target.offsetTop - parent.offsetTop);
     }
   }
 }
@@ -287,15 +302,11 @@ export default {
 }
 
 .node-item-main {
-  height: 100%;
-}
-
-.node-item-box {
   height: 90%;
   overflow: auto;
 }
 
-.node-item-box::-webkit-scrollbar {
+.node-item-main::-webkit-scrollbar {
   display: none
 }
 

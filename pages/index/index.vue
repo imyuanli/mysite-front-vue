@@ -42,7 +42,7 @@
               <Tools :shortcuts_list="shortcuts_list"/>
             </view>
             <view v-show="!showWorks">
-              <Comments :stickyNoteList="stickyNoteList"/>
+              <Comments :detailsIndex="detailsIndex" :stickyNoteList="stickyNoteList"/>
             </view>
           </view>
           <view class="navPageBox">
@@ -173,7 +173,7 @@
         </view>
       </el-dialog>
       <view class="dingTag">
-        <view class="tabs" v-for="(item,index) in stickyNoteList" v-if="item.isDing == true">
+        <view @click="showDetails(index)" class="tabs" v-for="(item,index) in stickyNoteList" v-if="item.isDing == true">
           <view class="tabs-text">
             {{ item.data }}
           </view>
@@ -281,7 +281,8 @@ export default {
       popoverVisible: false,
 
       //  便利贴功能
-      stickyNoteList: []
+      stickyNoteList: [],
+      detailsIndex:''
     }
   },
   onLoad() {
@@ -315,6 +316,23 @@ export default {
     //没有登录也是随机刷新
     else {
       this.getBackgroundImage()
+    }
+  },
+  onShow() {
+    this.timer = setInterval(() => {
+      this.getNowTime()
+    }, 1000);
+    //时间显示
+    if (store.get('token')) {
+      this.haveToken = true
+      get_user_info().then(
+          (res) => {
+            if (res) {
+              this.default_search = Number(res.default_search)
+              this.selectTarget = this.searchEngines[res.default_search].target
+            }
+          }
+      )
     }
   },
   methods: {
@@ -469,7 +487,8 @@ export default {
     },
     searchData() {
       let value = this.inputVlaue.replaceAll('&','%26')
-      window.open(this.selectTarget + value)
+      // window.open(this.selectTarget + value)
+      window.location.href = this.selectTarget + value
     },
     // 添加搜素引擎
     addSearchEngines() {
@@ -490,6 +509,10 @@ export default {
     updateStickyNote(){
       update_sticky_note({stickyNoteList:JSON.stringify(this.stickyNoteList)})
     },
+    showDetails(index){
+      this.detailsIndex = index
+      this.showWorks = false
+    }
   },
   onHide() {
     if (this.timer) {
