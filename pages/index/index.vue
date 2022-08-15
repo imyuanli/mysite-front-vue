@@ -200,9 +200,9 @@
         © {{ dateYear }} 鸢离
         <span v-show="showConciseFooter == 1">
           <span class="geduan">|</span>
-          <a class="icp" href="">dasd</a>
+          <a class="icp" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=41052202001272">豫公安网备41052202001272</a>
           <span class="geduan">|</span>
-          <a class="icp" href="">dasd</a></span>
+          <a class="icp" href="https://beian.miit.gov.cn/">冀ICP备2020030880号</a></span>
       </view>
     </view>
   </view>
