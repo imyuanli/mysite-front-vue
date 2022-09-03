@@ -46,7 +46,7 @@
                       placement="bottom">
             <view slot="content" class="contentSlotBox">
               <view class="content-bottom">
-                {{ selfImage ? '当前壁纸为永久，再次点击将随机切换' : '将当前壁纸设为永久' }}
+                 {{selfImage?'当前壁纸为永久，再次点击将随机切换':'将当前壁纸设为永久'}}
               </view>
             </view>
             <i @click="handleCurrentImage" :class="['icon-btn',selfImage?'el-icon-star-on':'el-icon-star-off']"></i>
@@ -397,19 +397,20 @@ export default {
     },
     //将当前壁纸 设为/取消 永久
     handleCurrentImage() {
-      if (this.selfImage) {
+      if(this.selfImage){
         this.backImageLoading = true
       }
-      let background_image = this.selfImage ? '' : this.backgroundImage
+      let background_image = this.selfImage?'':this.backgroundImage
       save_current_image({background_image}).then(
           (res) => {
             if (res) {
-              if (this.selfImage) {
+              if(this.selfImage){
                 this.getBackgroundImage()
-                this.selfImage = false
+                this.selfImage= false
                 this.backImageLoading = false
-              } else {
-                this.selfImage = true
+              }
+              else{
+                this.selfImage= true
               }
             }
           }
@@ -423,6 +424,7 @@ export default {
             this.basic_settings = res.basic_settings
             //显示秒数
             this.showSeconds = res.show_seconds
+            //一言
             this.showWeather = res.show_weather
             //显示footer
             this.showConciseFooter = res.show_concise_footer
