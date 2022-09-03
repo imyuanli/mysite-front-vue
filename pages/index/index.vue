@@ -1,41 +1,14 @@
 <template>
   <view class="content" v-loading="backImageLoading" :style="{'backgroundImage':`url(${backgroundImage})`}">
     <!--  <view class="content">-->
-    <view @click.self="handleClickClose()" :class="[showLongInput?'contentBox showBlur':'contentBox']">
+    <view @click.self="handleClickClose()" :class="['contentBox',showLongInput?'showBlur':'']">
       <view>
-        <view class="time">
-          <span>{{ dateTime }}</span>
-          <span v-show="showSeconds == 1">{{ dateSeconds }}</span>
-        </view>
-        <view @click="handleClickOpen" :class="[showLongInput?'searchBar longInput ':'searchBar shortInput']">
-          <input
-              @keydown.enter="searchData"
-              class="input"
-              v-model="inputVlaue"
-              :placeholder="showLongInput?'':'搜索'"/>
-          <el-popover
-              placement="bottom"
-              width="100"
-              trigger="click"
-              v-model="popoverVisible">
-            <view class="search-menu">
-              <view @click="selectEngines(item,index)" class="menu-item" v-for="(item,index) in searchEngines">
-                <img class="menu-img" :src="item.icon" alt="">
-                <span>{{ item.name }}</span>
-              </view>
-              <!--              <view class="menu-item" @click="addSearchEngines">-->
-              <!--                <i class="menu-icon el-icon-plus"></i>-->
-              <!--                <span>添加搜索引擎</span>-->
-              <!--              </view>-->
-            </view>
-            <view @click="!popoverVisible" slot="reference" v-show="showLongInput" class="search-item search-type">
-              <img class="search-item-img" :src="searchEngines[default_search].icon" alt="">
-            </view>
-          </el-popover>
-          <view @click="searchData" v-show="showLongInput" class="search-item search-icon-box">
-            <i class="search-icon el-icon-search"></i>
-          </view>
-        </view>
+        <Time :showSeconds="showSeconds"/>
+        <MyInput
+            :showLongInput="showLongInput"
+            :default_search_index="default_search_index"
+            :handleClickOpen="handleClickOpen"
+        />
         <view v-show="!showLongInput">
           <view @touchstart="touchStart" @touchend="touchEnd">
             <view v-show="showWorks">
@@ -47,20 +20,21 @@
           </view>
           <view class="navPageBox">
             <view class="navBox" @click="changeComment">
-              <span :class="[showWorks?'nav navActive':'nav']"></span>
+              <span :class="['nav',showWorks && 'navActive']"></span>
             </view>
             <view class="navBox" @click="changeTools">
-              <span :class="[showWorks?'nav':'nav navActive']" class="nav"></span>
+              <span :class="['nav',!showWorks && 'navActive']"></span>
             </view>
           </view>
         </view>
+        <!--一言-->
         <view v-show="showWeather == 1" style="width: 80%">
           <view class="famous-info-box" v-show="showLongInput">
             <view class="famous-info">
-              「 {{famousInfo.hitokoto}} 」
+              「 {{ famousInfo.hitokoto }} 」
             </view>
             <view class="famous-form">
-              —— {{famousInfo.from}}
+              —— {{ famousInfo.from }}
             </view>
           </view>
         </view>
@@ -70,18 +44,12 @@
           <el-tooltip class="item"
                       effect="light"
                       placement="bottom">
-            <view v-if="!selfImage" slot="content" class="contentSlotBox">
+            <view slot="content" class="contentSlotBox">
               <view class="content-bottom">
-                将当前壁纸设为永久
+                {{ selfImage ? '当前壁纸为永久，再次点击将随机切换' : '将当前壁纸设为永久' }}
               </view>
             </view>
-            <view v-if="selfImage" slot="content" class="contentSlotBox">
-              <view class="content-bottom">
-                当前壁纸为永久，再次点击将随机切换
-              </view>
-            </view>
-            <i v-if="!selfImage" @click="saveCurrentImage" class="el-icon-star-off icon-btn"></i>
-            <i v-if="selfImage" @click="delCurrentImage(true)" class="el-icon-star-on icon-btn"></i>
+            <i @click="handleCurrentImage" :class="['icon-btn',selfImage?'el-icon-star-on':'el-icon-star-off']"></i>
           </el-tooltip>
         </view>
         <view class="lFBox">
@@ -122,9 +90,9 @@
                 <span class="userName">鸢离</span>
                 <span>账号管理</span>
               </view>
-              <view class="userInfo">
-                自定义设置
-              </view>
+              <!--              <view class="navBar">-->
+              <!--                自定义设置-->
+              <!--              </view>-->
               <view class="userInfo" @click="logOut">退出登录</view>
             </view>
             <i @click="goToLoginPage" class="el-icon-user-solid icon-btn"></i>
@@ -137,12 +105,12 @@
               trigger="click">
             <view>
               <view class="userInfo" @click="showDialog">
-                <span class="userName">{{userName}}</span>
+                <span class="userName">{{ userName }}</span>
                 <span>账号管理</span>
               </view>
-              <view class="userInfo">
-                自定义设置
-              </view>
+              <!--              <view class="navBar">-->
+              <!--                自定义设置-->
+              <!--              </view>-->
               <view class="userInfo" @click="logOut">退出登录</view>
             </view>
             <i slot="reference" class="el-icon-user-solid icon-btn"></i>
@@ -163,7 +131,8 @@
             <view v-if="i.should_edit == 'true'">
               <span>{{ i.name }}</span>
               <span v-if="!isChangeName" class="info-text">{{ i.data }}</span>
-              <el-input maxlength="30" class="info-text update" v-if="isChangeName" v-model="changeNameValue" type="text"/>
+              <el-input maxlength="30" class="info-text update" v-if="isChangeName" v-model="changeNameValue"
+                        type="text"/>
               <i v-if="!isChangeName" @click="showUpdate" class="info-icon el-icon-edit"></i>
               <span @click="updateUserName(i,index)" v-if="isChangeName" class="info-edit info-icon">保存</span>
             </view>
@@ -185,7 +154,8 @@
         </view>
       </el-dialog>
       <view class="dingTag">
-        <view @click="showDetails(index)" class="tabs" v-for="(item,index) in stickyNoteList" v-if="item.isDing == true">
+        <view @click="showDetails(index)" class="tabs" v-for="(item,index) in stickyNoteList"
+              v-if="item.isDing == true">
           <view class="tabs-text">
             {{ item.data }}
           </view>
@@ -197,7 +167,7 @@
         </view>
       </view>
       <view class="footer">
-        © {{ dateYear }} 鸢离
+        © {{ new Date().getFullYear() }} 鸢离
         <span v-show="showConciseFooter == 1">
           <span class="geduan">|</span>
           <a class="icp" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=41052202001272">豫公安网备41052202001272</a>
@@ -211,16 +181,18 @@
 <script>
 import {
   get_background_mage,
-  get_basic_settings, get_famous,
+  get_basic_settings,
+  get_famous,
   get_user_info,
   save_current_image,
   update_basic_settings,
   update_info,
-  update_search_engines, update_sticky_note
+  update_sticky_note
 } from "../../service/service";
 import Tools from '../../compontent/tools'
 import Comments from '../../compontent/comments'
-import Userinfo from '../../compontent/userInfo'
+import Time from '../../compontent/time'
+import MyInput from '../../compontent/myInput'
 import {goToLoginPage} from '../../utils/routers'
 import store from "store";
 import {fnTime} from "../../utils/utils";
@@ -229,7 +201,8 @@ export default {
   components: {
     Tools,
     Comments,
-    Userinfo
+    Time,
+    MyInput
   },
   data() {
     return {
@@ -238,11 +211,7 @@ export default {
       //快捷方式
       shortcuts_list: [],
       value: '',
-      //  时间
-      dateTime: '',
-      dateSeconds: "",
-      dateYear: "",
-      timer: "",
+
       //作品和评论及DING
       showWorks: true,
       //壁纸
@@ -253,6 +222,7 @@ export default {
       dialogVisible: false,
       info: '',
       basic_settings: '',
+
       userName: '',
       email: '',
       uid: '',
@@ -260,58 +230,27 @@ export default {
       isChangeName: false,
       changeNameValue: "",
       selfImage: false,  //false
+
       //  基础设置
       showSeconds: 0,
       showWeather: 0,
       showConciseFooter: 0,
       showToGreet: 0,
+
       //  搜索引擎
-      searchEngines: [
-        {
-          name: "百度",
-          target: "https://www.baidu.com/s?wd=",
-          icon: 'https://www.baidu.com/favicon.ico'
-        },
-        {
-          name: "必应",
-          target: "https://cn.bing.com/search?q=",
-          icon: 'https://www.jianfast.com/static/home/images/searchChoice/bing.svg'
-        },
-        {
-          name: "谷歌",
-          target: "https://www.google.com/search?q=",
-          icon: 'https://www.jianfast.com/static/home/images/searchChoice/google.svg'
-        },
-        {
-          name: "360",
-          target: "https://www.so.com/s?q=",
-          icon: 'https://s2.ssl.qhimg.com/static/121a1737750aa53d.ico'
-        },
-        {
-          name: "搜狗",
-          target: "https://www.sogou.com/web?query=",
-          icon: 'https://www.sogou.com/images/logo/new/favicon.ico'
-        },
-      ],
-      selectTarget: "https://www.baidu.com/s?wd=",
-      default_search: 0,
-      popoverVisible: false,
+      default_search_index: 0,
 
       //  便利贴功能
       stickyNoteList: [],
-      detailsIndex:'',
-      greetInfo:'',
+      detailsIndex: '',
+      greetInfo: '',
 
       // 名人名言
-      famousInfo:"",
-      backImageLoading:false
+      famousInfo: "",
+      backImageLoading: false
     }
   },
-  onLoad() {
-    //时间显示
-    this.timer = setInterval(() => {
-      this.getNowTime()
-    }, 1000);
+  mounted() {
     this.showGreete()
     if (store.get('token')) {
       this.haveToken = true
@@ -321,8 +260,7 @@ export default {
               this.userName = res.user_name
               this.info = res.info[0]
               this.shortcuts_list = JSON.parse(res.shortcuts_list)
-              this.default_search = Number(res.default_search)
-              this.selectTarget = this.searchEngines[res.default_search].target
+              this.default_search_index = Number(res.default_search)
               this.stickyNoteList = JSON.parse(res.stickyNoteList)
               if (res.background_image !== "null") {
                 //说明背景图不为空
@@ -341,72 +279,43 @@ export default {
       this.getBackgroundImage()
     }
   },
-  onShow() {
-    this.timer = setInterval(() => {
-      this.getNowTime()
-    }, 1000);
-    //时间显示
-    if (store.get('token')) {
-      this.haveToken = true
-      get_user_info().then(
-          (res) => {
-            if (res) {
-              this.default_search = Number(res.default_search)
-              this.selectTarget = this.searchEngines[res.default_search].target
-            }
-          }
-      )
-    }
-  },
   methods: {
-    showGreete(){
-      var dd= new Date();
-      var hour =dd.getHours();//获取当前时
+    //问候
+    showGreete() {
+      var dd = new Date();
+      var hour = dd.getHours();//获取当前时
       //alert(hour);
-      if(hour>0 && hour<=6){
-        this.greetInfo="还没休息啊，该休息了";
-      }else if(hour>6 && hour<=9){
-        this.greetInfo="上午好";
-      }else if(hour>9 && hour<=12){
-        this.greetInfo="早上好";
-      }else if(hour>12 && hour<=14){
-        this.greetInfo="中午好";
-      }else if(hour>14 && hour<=18){
-        this.greetInfo="下午好";
-      }else if(hour>18 && hour<=21){
-        this.greetInfo="傍晚好";
-      }else if(hour>21 && hour<=24){
-        this.greetInfo="晚上好";
+      if (hour > 0 && hour <= 6) {
+        this.greetInfo = "还没休息啊，该休息了";
+      } else if (hour > 6 && hour <= 9) {
+        this.greetInfo = "上午好";
+      } else if (hour > 9 && hour <= 12) {
+        this.greetInfo = "早上好";
+      } else if (hour > 12 && hour <= 14) {
+        this.greetInfo = "中午好";
+      } else if (hour > 14 && hour <= 18) {
+        this.greetInfo = "下午好";
+      } else if (hour > 18 && hour <= 21) {
+        this.greetInfo = "傍晚好";
+      } else if (hour > 21 && hour <= 24) {
+        this.greetInfo = "晚上好";
       }
     },
+    //北京颜色的变换
     handleClickOpen() {
       this.showLongInput = true
     },
     handleClickClose() {
       this.showLongInput = false
     },
-    getNowTime() {
-      let date = new Date()
-      let hours = date.getHours()
-      let minutes = date.getMinutes()
-      let seconds = date.getSeconds()
-      if (minutes < 10) {
-        minutes = "0" + minutes;
-      }
-      if (seconds < 10) {
-        seconds = "0" + seconds;
-      }
-      this.dateTime = `${hours}:${minutes}`
-      this.dateSeconds = `:${seconds}`
-      this.dateYear = date.getFullYear()
-    },
+    //背景图片
     getBackgroundImage() {
       this.backImageLoading = true
       get_background_mage().then(
           (res) => {
-            if(res){
+            if (res) {
               if (this.selfImage) {
-                this.delCurrentImage(false)
+                this.handleCurrentImage(true)
               }
               this.backgroundImage = res
               this.backImageLoading = false
@@ -414,6 +323,7 @@ export default {
           }
       )
     },
+    //
     changeComment() {
       this.showWorks = true
     },
@@ -461,12 +371,12 @@ export default {
       this.changeNameValue = this.userName
     },
     updateUserName(i, index) {
-      let user_name = this.changeNameValue.replace(/\s*/g,'')
-      if(!user_name){
+      let user_name = this.changeNameValue.replace(/\s*/g, '')
+      if (!user_name) {
         this.$message({
           message: '用户名不能输入空',
           center: true,
-          type:'warning'
+          type: 'warning'
         });
         return;
       }
@@ -485,48 +395,47 @@ export default {
           }
       )
     },
-    //将当前壁纸设为永久
-    saveCurrentImage() {
-      save_current_image({background_image: this.backgroundImage}).then(
+    //将当前壁纸 设为/取消 永久
+    handleCurrentImage() {
+      if (this.selfImage) {
+        this.backImageLoading = true
+      }
+      let background_image = this.selfImage ? '' : this.backgroundImage
+      save_current_image({background_image}).then(
           (res) => {
             if (res) {
-              this.selfImage = true
-            }
-          }
-      )
-    },
-    //取消当前的永久壁纸
-    delCurrentImage(isHandle) {
-      this.backImageLoading = true
-      save_current_image({background_image: ''}).then(
-          (res) => {
-            if (res) {
-              this.selfImage = false
-              if(isHandle){
+              if (this.selfImage) {
                 this.getBackgroundImage()
+                this.selfImage = false
+                this.backImageLoading = false
+              } else {
+                this.selfImage = true
               }
-              this.backImageLoading = false
             }
           }
       )
     },
+
     //  基础设置
     getBasicSettings() {
       get_basic_settings().then(
           (res) => {
             this.basic_settings = res.basic_settings
+            //显示秒数
             this.showSeconds = res.show_seconds
             this.showWeather = res.show_weather
+            //显示footer
             this.showConciseFooter = res.show_concise_footer
+            //问候
             this.showToGreet = res.show_to_greet
-            if(res.show_to_greet ==1){
+            if (res.show_to_greet == 1) {
               this.$message({
-                message: this.userName +','+this.greetInfo,
+                message: this.userName + ',' + this.greetInfo,
                 center: true,
-                iconClass:'el-icon-mm',
+                iconClass: 'el-icon-mm',
               });
             }
-            if(res.show_weather == 1){
+            if (res.show_weather == 1) {
               this.getFamous()
             }
           }
@@ -554,34 +463,12 @@ export default {
       }
       this.$set(this.basic_settings, index, obj);
       update_basic_settings({type, data}).then(
-          (res)=>{
-            if(res.show_weather && res.show_weather ==1){
+          (res) => {
+            if (res.show_weather && res.show_weather == 1) {
               this.getFamous()
             }
           }
       )
-    },
-    selectEngines(item, index) {
-      this.selectTarget = item.target
-      this.default_search = index
-      this.popoverVisible = false
-      if (this.haveToken) {
-        update_search_engines({default_search: this.default_search})
-      }
-    },
-    searchData() {
-      let value =""
-      value = this.inputVlaue.replaceAll('&','%26')
-      value = this.inputVlaue.replaceAll('#','%23')
-      // window.open(this.selectTarget + value)
-      window.location.href = this.selectTarget + value
-    },
-    // 添加搜素引擎
-    addSearchEngines() {
-
-    },
-    updateSearchEngines() {
-
     },
     changeTime(time) {
       return fnTime(time)
@@ -592,31 +479,23 @@ export default {
       this.$set(this.stickyNoteList, index, item)
       this.updateStickyNote()
     },
-    updateStickyNote(){
-      update_sticky_note({stickyNoteList:JSON.stringify(this.stickyNoteList)})
+    updateStickyNote() {
+      update_sticky_note({stickyNoteList: JSON.stringify(this.stickyNoteList)})
     },
-    showDetails(index){
+    showDetails(index) {
       this.detailsIndex = index
       this.showWorks = false
     },
-    getFamous(){
+    getFamous() {
       get_famous().then(
-          (res1)=>{
+          (res1) => {
             let data = JSON.parse(res1).data
-            // creator: "树形图设计者"
-            // from: "克尔苏加德"
-            // hitokoto: "退后，你们这些无知的家伙！你不会就这样死的，我的国王！"
-            this.famousInfo={
-              from:data.from,
-              hitokoto:data.hitokoto,
+            this.famousInfo = {
+              from: data.from,
+              hitokoto: data.hitokoto,
             }
           }
       )
-    }
-  },
-  onHide() {
-    if (this.timer) {
-      clearInterval(this.timer); // 在Vue实例销毁前，清除我们的定时器
     }
   }
 }
@@ -633,27 +512,6 @@ export default {
   position: relative;
 }
 
-.time {
-  position: fixed;
-  top: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 10px;
-  text-align: center;
-  cursor: pointer;
-  transition: .25s;
-  animation: delayedFadeIn 2s;
-  color: #fff;
-  font-size: 32px;
-  font-weight: 200;
-  text-shadow: 0 0 20px rgba(0, 0, 0, .35);
-}
-
-.time:hover {
-  transform: translateX(-50%) scale(1.2);
-
-}
-
 .contentBox {
   width: 100%;
   height: 100%;
@@ -664,68 +522,6 @@ export default {
   backdrop-filter: blur(10px);
 }
 
-.searchBar {
-  position: absolute;
-  top: 180px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 230px;
-  max-width: 80%;
-  height: 43px;
-  border-radius: 30px;
-  color: #fff;
-  background-color: rgba(255, 255, 255, .25);
-  box-shadow: rgb(0 0 0 / 20%) 0 0 10px;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  overflow: hidden;
-  transition: color .25s, background-color .25s, box-shadow .25s, left .25s, opacity .25s, top .25s, width .25s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.shortInput {
-  width: 230px;
-  color: #fff;
-  background-color: rgba(255, 255, 255, .25);
-  box-shadow: rgb(0 0 0 / 20%) 0 0 10px;
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.input {
-  outline: 0;
-  border: none;
-  width: 80%;
-  height: 100%;
-  color: inherit;
-  background-color: transparent;
-  font-size: 14px;
-  font-family: "Microsoft Yahei Light", "Microsoft Yahei", "PingFang SC", "Helvetica Neue", Helvetica, Tahoma, Arial, sans-serif;
-  text-align: center;
-}
-
-.shortInput:hover {
-  color: black;
-  background-color: rgba(255, 255, 255, .6);
-  box-shadow: rgb(0 0 0 / 30%) 0 0 10px;
-  width: 530px;
-}
-
-.longInput {
-  color: black;
-  background-color: rgba(255, 255, 255, .9);
-  box-shadow: rgb(0 0 0 / 20%) 0 0 10px;
-  width: 530px;
-
-}
-
-.selectBox {
-  width: 400px;
-  position: fixed;
-  left: 0;
-  z-index: 1000;
-}
 
 .lFBox {
   margin: 15px;
@@ -991,138 +787,6 @@ export default {
 }
 
 
-/*.tabs {*/
-
-/*}*/
-
-/*.box {*/
-/*  min-width: 300px;*/
-/*  max-height: 150px;*/
-/*  overflow-y: auto;*/
-/*  border-radius: 6px;*/
-/*  background: rgba(255, 255, 255, .1);*/
-/*  backdrop-filter: blur(10px);*/
-/*  margin-bottom: 30px;*/
-/*  padding: 10px 10px 10px 30px;*/
-/*  box-shadow: 1px 2px 1px -1px #777;*/
-/*  transition: background 300ms ease-in-out;*/
-/*  text-align: left;*/
-/*  box-sizing: border-box;*/
-/*  !*transform: translateX(-45px);*!*/
-/*  cursor: pointer;*/
-/*  color: #fff;*/
-/*}*/
-
-/*.box ::-webkit-scrollbar {*/
-/*  display: none*/
-/*}*/
-
-/*.box:hover{*/
-/*  animation: transx 500ms;*/
-/*  transform:translateX(0)*/
-/*}*/
-/*@keyframes transx {*/
-/*  from{*/
-/*    transform:translateX(-45px)*/
-/*  }*/
-/*  to{*/
-/*    transform:translateX(0);*/
-/*  }*/
-/*}*/
-/*.box a {*/
-/*  color: rgba(255, 255, 255, .8);*/
-/*  text-decoration: none;*/
-/*  font-size: 15px;*/
-/*}*/
-
-/*.shadow:before {*/
-/*  z-index: -1;*/
-/*  position: absolute;*/
-/*  content: "";*/
-/*  top: 0;*/
-/*  right: 0;*/
-/*  width: 75%;*/
-/*  -webkit-transform: rotate(4deg);*/
-/*  transform: rotate(4deg);*/
-/*  transition: all 150ms ease-in-out;*/
-/*}*/
-
-/*.box:hover {*/
-/*  background: rgba(255, 255, 255, .5);*/
-/*}*/
-
-/*!*.shadow:hover::before {*!*/
-/*!*  -webkit-transform: rotate(0deg);*!*/
-/*!*  transform: rotate(0deg);*!*/
-/*!*  bottom: 20px;*!*/
-/*!*  z-index: -10;*!*/
-/*!*}*!*/
-
-
-.search-item {
-  /*pointer-events: none;*/
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 2px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: .25s;
-  text-align: center;
-}
-
-.search-item-img {
-  width: 28px;
-  height: auto;
-}
-
-.search-type {
-  left: 10px;
-  color: rgba(0, 0, 0, .5);
-}
-
-.search-icon-box {
-  right: 10px;
-  color: #70C000;
-}
-
-.search-item:hover {
-  border-radius: 50px;
-  background-color: #fff;
-  filter: brightness(1.1);
-}
-
-.search-icon {
-  font-size: 20px;
-}
-
-.menu-item {
-  padding: 10px 15px;
-  border-radius: 5px;
-  color: black;
-  font-size: 12px;
-  transition: .25s;
-  cursor: pointer;
-}
-
-.menu-item:hover {
-  background-color: rgba(0, 0, 0, .1);
-}
-
-.menu-icon {
-  margin-right: 15px;
-  font-size: 14px;
-}
-
-.menu-img {
-  width: 14px;
-  height: 14px;
-  margin-right: 15px;
-}
-
 .dingTag {
   position: absolute;
   left: 10px;
@@ -1206,19 +870,22 @@ export default {
     display: none;
   }
 }
-.geduan{
+
+.geduan {
   margin: 0 10px;
 
 }
-.icp{
+
+.icp {
   color: rgba(255, 255, 255, .6);
   text-decoration: none;
 }
-.el-icon-mm{
+
+.el-icon-mm {
   display: none;
 }
 
-.famous-info-box{
+.famous-info-box {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
@@ -1226,24 +893,28 @@ export default {
   width: 80%;
   padding: 15px 50px;
   border-radius: 15px;
-  color: rgba(255,255,255,.9);
+  color: rgba(255, 255, 255, .9);
   font-size: small;
   text-align: center;
   cursor: default;
   transition: .5s;
 }
-.famous-info{
+
+.famous-info {
   text-shadow: 0 0 20px rgb(0 0 0 / 80%);
   transition: .25s;
 }
-.famous-form{
+
+.famous-form {
   opacity: 0;
   margin-top: 8px;
 }
-.famous-info-box:hover{
-  background-color: rgba(255,255,255,.1);
+
+.famous-info-box:hover {
+  background-color: rgba(255, 255, 255, .1);
 }
-.famous-info-box:hover .famous-form{
+
+.famous-info-box:hover .famous-form {
   opacity: 1;
 }
 
